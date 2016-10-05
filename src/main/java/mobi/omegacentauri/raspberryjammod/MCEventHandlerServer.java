@@ -11,22 +11,23 @@ public class MCEventHandlerServer extends MCEventHandler {
 		super();
 		doRemote = false;
 	}
-	
+
+	@Override
+	protected World[] getWorlds() {
+		return MinecraftServer.getServer().worldServers;
+	}
+
 	@SubscribeEvent
 	public void onChatEvent(ServerChatEvent event) {
 		APIHandler.ChatDescription cd = new APIHandler.ChatDescription(event.player.getEntityId(), event.message);
 
-		for (APIHandler apiHandler : apiHandlers)
+		for (APIHandler apiHandler : apiHandlers) {
 			apiHandler.addChatDescription(cd);
+		}
 	}
-	
+
 	@SubscribeEvent
 	public void onServerTick(TickEvent.ServerTickEvent event) {
 		runQueue();
-	}
-	
-	@Override
-	protected World[] getWorlds() {
-		return MinecraftServer.getServer().worldServers;
 	}
 }

@@ -1,44 +1,27 @@
 package mobi.omegacentauri.raspberryjammod;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
-import tv.twitch.chat.IChatAPIListener;
-
-import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.network.Packet;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.IChatComponent;
 
 public class NightVisionExternalCommand implements ICommand {
 	private ClientEventHandler eventHandler;
 
 	public NightVisionExternalCommand(ClientEventHandler eventHandler2) {
-		this.eventHandler = eventHandler2;
+		eventHandler = eventHandler2;
 	}
 
 	@Override
-	public List addTabCompletionOptions(ICommandSender sender, String[] args,
-			BlockPos pos) {
+	public List addTabCompletionOptions(ICommandSender sender, String[] args, BlockPos pos) {
 
 		if (args.length == 1) {
 			List<String> options = new ArrayList<String>();
@@ -50,52 +33,25 @@ public class NightVisionExternalCommand implements ICommand {
 	}
 
 	@Override
-	public List getAliases() {
+	public boolean canCommandSenderUseCommand(ICommandSender sender) {
+		return true;
+	}
+
+	@Override
+	public int compareTo(ICommand o) {
+		return 0;
+	}
+
+	@Override
+	public List<String> getCommandAliases() {
 		List<String> aliases = new ArrayList<String>();
-		aliases.add(getName());
+		aliases.add(getCommandName());
 		aliases.add("nv");
 		return aliases;
 	}
 
 	@Override
-	public void execute(ICommandSender sender, String[] args)
-			throws CommandException {
-		boolean nv;
-
-		if (args.length == 0) {
-			nv = ! eventHandler.getNightVision();
-		}
-		else if (args[0].toLowerCase().equals("on")) {
-			nv = true;
-		}
-		else if (args[0].toLowerCase().equals("off")) {
-			nv = false;
-		}
-		else {
-			throw new CommandException("Usage: /nightvision [on|off]");
-		}
-
-		eventHandler.setNightVision(nv);
-		EntityPlayerSP player = Minecraft.getMinecraft().thePlayer;
-		if (player != null) {
-			if (nv) {
-				player.addPotionEffect(new PotionEffect(Potion.nightVision.id, 4096));
-				player.addChatComponentMessage(new ChatComponentText("Enabled night vision"));
-			}
-			else {
-				player.removePotionEffect(Potion.nightVision.id);
-				player.addChatComponentMessage(new ChatComponentText("Disabled night vision"));
-			}
-		}
-	}
-
-	@Override
-	public int compareTo(Object o) {
-		return 0;
-	}
-
-	@Override
-	public String getName() {
+	public String getCommandName() {
 		return "nightvision";
 	}
 
@@ -105,12 +61,34 @@ public class NightVisionExternalCommand implements ICommand {
 	}
 
 	@Override
-	public boolean canCommandSenderUse(ICommandSender sender) {
-		return true;
+	public boolean isUsernameIndex(String[] args, int index) {
+		return false;
 	}
 
 	@Override
-	public boolean isUsernameIndex(String[] args, int index) {
-		return false;
+	public void processCommand(ICommandSender sender, String[] args) throws CommandException {
+		boolean nv;
+
+		if (args.length == 0) {
+			nv = !eventHandler.getNightVision();
+		} else if (args[0].toLowerCase().equals("on")) {
+			nv = true;
+		} else if (args[0].toLowerCase().equals("off")) {
+			nv = false;
+		} else {
+			throw new CommandException("Usage: /nightvision [on|off]");
+		}
+
+		eventHandler.setNightVision(nv);
+		EntityPlayerSP player = Minecraft.getMinecraft().thePlayer;
+		if (player != null) {
+			if (nv) {
+				player.addPotionEffect(new PotionEffect(Potion.nightVision.id, 4096));
+				player.addChatComponentMessage(new ChatComponentText("Enabled night vision"));
+			} else {
+				player.removePotionEffect(Potion.nightVision.id);
+				player.addChatComponentMessage(new ChatComponentText("Disabled night vision"));
+			}
+		}
 	}
 }

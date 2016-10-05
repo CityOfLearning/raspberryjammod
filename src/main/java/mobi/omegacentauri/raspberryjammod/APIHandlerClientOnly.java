@@ -1,6 +1,5 @@
 package mobi.omegacentauri.raspberryjammod;
 
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Scanner;
@@ -10,7 +9,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
 
 // This class is meant to provide most of the APIHandler facility while one is connected to a
 // server. Of course, any block changes won't get written back to the server.
@@ -22,42 +20,47 @@ public class APIHandlerClientOnly extends APIHandler {
 	}
 
 	@Override
-	protected boolean setup() {
-		if (!RaspberryJamMod.integrated) {
-			fail("This requires the client");
-			return false;
-		}
-		
-		mc = Minecraft.getMinecraft();
-		if (mc == null) {
-			fail("Minecraft client not yet available");
-			return false;
-		}		
+	protected void cameraCommand(String cmd, Scanner scan) {
+	}
 
-		serverWorlds = new World[] { mc.theWorld };
-		
-		if (mc.thePlayer == null) {
-			fail("Client player not available");
-			return false;
-		}
-		
-		playerId = mc.thePlayer.getEntityId();
-		playerMP = null;
-		havePlayer = true;
-		return true;
+	@Override
+	protected void chat(String msg) {
+		mc.thePlayer.addChatComponentMessage(new ChatComponentText(msg));
 	}
 
 	@Override
 	protected Entity getServerEntityByID(int id) {
 		Entity e = mc.theWorld.getEntityByID(id);
-		if (e == null)
-			fail("Cannot find entity "+id);
+		if (e == null) {
+			fail("Cannot find entity " + id);
+		}
 		return e;
 	}
-	
+
 	@Override
-	protected void chat(String msg) {
-		mc.thePlayer.addChatComponentMessage(new ChatComponentText(msg));
+	protected boolean setup() {
+		if (!RaspberryJamMod.integrated) {
+			fail("This requires the client");
+			return false;
+		}
+
+		mc = Minecraft.getMinecraft();
+		if (mc == null) {
+			fail("Minecraft client not yet available");
+			return false;
+		}
+
+		serverWorlds = new World[] { mc.theWorld };
+
+		if (mc.thePlayer == null) {
+			fail("Client player not available");
+			return false;
+		}
+
+		playerId = mc.thePlayer.getEntityId();
+		playerMP = null;
+		havePlayer = true;
+		return true;
 	}
 
 	@Override
@@ -70,7 +73,7 @@ public class APIHandlerClientOnly extends APIHandler {
 		double dx = scan.nextDouble();
 		double dy = scan.nextDouble();
 		double dz = scan.nextDouble();
-		double speed = scan.nextDouble();
+		scan.nextDouble();
 		int count = scan.nextInt();
 
 		int[] extras = null;
@@ -80,23 +83,20 @@ public class APIHandlerClientOnly extends APIHandler {
 				particle = e;
 				extras = new int[e.getArgumentCount()];
 				try {
-					for (int i = 0 ; i < extras.length; i++)
+					for (int i = 0; i < extras.length; i++) {
 						extras[i] = scan.nextInt();
+					}
+				} catch (Exception exc) {
 				}
-				catch (Exception exc) {}
 				break;
 			}
 		}
 		if (particle == null) {
 			fail("Cannot find particle type");
-		}
-		else {
-			for (int i = 0 ; i < count ; i++)
+		} else {
+			for (int i = 0; i < count; i++) {
 				pos.world.spawnParticle(particle, false, pos.xCoord, pos.yCoord, pos.zCoord, dx, dy, dz, extras);
+			}
 		}
-	}
-
-	@Override
-	protected void cameraCommand(String cmd, Scanner scan) {
 	}
 }
