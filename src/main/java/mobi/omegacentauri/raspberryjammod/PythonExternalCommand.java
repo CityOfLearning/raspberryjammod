@@ -1,8 +1,10 @@
 package mobi.omegacentauri.raspberryjammod;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
 

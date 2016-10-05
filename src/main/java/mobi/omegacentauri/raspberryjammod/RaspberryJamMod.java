@@ -30,9 +30,11 @@ public class RaspberryJamMod {
 	static int wsPort = 14711;
 	public static boolean concurrent = true;
 	public static boolean leftClickToo = true;
+	public static boolean useSystemPath = true;
 	public static boolean allowRemote = true;
 	public static boolean globalChatMessages = true;
 	public static String pythonInterpreter = "python";
+	public static String pythonEmbeddedLocation = "rjm-python";
 	public static boolean integrated = true;
 	public static volatile boolean apiActive = false;
 	static boolean clientOnlyAPI = false;
@@ -76,6 +78,10 @@ public class RaspberryJamMod {
 				"Remote connections");
 		leftClickToo = configFile.getBoolean("Detect Sword Left-Click", Configuration.CATEGORY_GENERAL, false,
 				"Detect sword left-click");
+		useSystemPath = configFile.getBoolean("Search System Path", Configuration.CATEGORY_GENERAL, true,
+				"Search for python on the system path or use a local embedded version");
+		pythonEmbeddedLocation = configFile.getString("Embedded Python Location", Configuration.CATEGORY_GENERAL, "rjm-python",
+				"Relative to .minecraft folder or server jar");
 		pythonInterpreter = configFile.getString("Python Interpreter", Configuration.CATEGORY_GENERAL, "python",
 				"Python interpreter");
 		globalChatMessages = configFile.getBoolean("Messages Go To All", Configuration.CATEGORY_GENERAL, true,
@@ -239,7 +245,6 @@ public class RaspberryJamMod {
 
 		configFile = new Configuration(event.getSuggestedConfigurationFile());
 		configFile.load();
-		System.out.println("configFile = " + configFile.getConfigFile().getPath());
 		// KeyBindings.init();
 
 		synchronizeConfig();

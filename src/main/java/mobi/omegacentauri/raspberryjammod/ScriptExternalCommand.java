@@ -21,6 +21,8 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.relauncher.Side;
 
 public abstract class ScriptExternalCommand implements ICommand {
 	public static boolean isWindows() {
@@ -144,8 +146,22 @@ public abstract class ScriptExternalCommand implements ICommand {
 			return base;
 		}
 
-		String pathVar = System.getenv("PATH");
+		String pathVar = "";
+
+		if (RaspberryJamMod.useSystemPath) {
+			pathVar = System.getenv("PATH");
+		} else {
+			if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
+				File localpath = Minecraft.getMinecraft().mcDataDir;
+				pathVar = new File(localpath, RaspberryJamMod.pythonEmbeddedLocation).getAbsolutePath();
+			} else {
+				File localpath = MinecraftServer.getServer().getDataDirectory();
+				pathVar = new File(localpath, RaspberryJamMod.pythonEmbeddedLocation).getAbsolutePath();
+			}
+		}
+
 		String extra = extraPath();
+
 		if (pathVar == null) {
 			if (extra.length() == 0) {
 				return base;
@@ -166,7 +182,6 @@ public abstract class ScriptExternalCommand implements ICommand {
 				return p;
 			}
 		}
-
 		return base;
 	}
 
