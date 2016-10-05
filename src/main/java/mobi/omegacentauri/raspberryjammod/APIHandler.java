@@ -102,12 +102,10 @@ public class APIHandler {
 	protected static final String WORLDGETPLAYERID = "world.getPlayerId";
 	protected static final String WORLDSETTING = "world.setting";
 
-	protected static final String GETLIGHTLEVEL = "block.getLightLevel"; // EXPERIMENTAL
-																			// AND
-																			// UNSUPPORTED
-	protected static final String SETLIGHTLEVEL = "block.setLightLevel"; // EXPERIMENTAL
-																			// AND
-																			// UNSUPPORTED
+	// EXPERIMENTAL AND UNSUPPORTED
+	protected static final String GETLIGHTLEVEL = "block.getLightLevel"; 
+	protected static final String SETLIGHTLEVEL = "block.setLightLevel"; 
+	
 	protected static final String EVENTSBLOCKHITS = "events.block.hits";
 	protected static final String EVENTSCHATPOSTS = "events.chat.posts";
 
@@ -118,20 +116,20 @@ public class APIHandler {
 	protected static final String SETNORMAL = "setNormal";
 	protected static final String GETENTITYID = "getEntityId";
 
-	protected static final String SETDEBUG = "setDebug"; // EXPERIMENTAL AND
-															// UNSUPPORTED
-	protected static final String SETDISTANCE = "setDistance"; // EXPERIMENTAL
-																// AND
-																// UNSUPPORTED
+	// EXPERIMENTAL AND UNSUPPORTED
+	protected static final String SETDEBUG = "setDebug"; 
+	protected static final String SETDISTANCE = "setDistance"; 
+	
 	// player.* or entity.*
 	protected static final String GETDIRECTION = "getDirection";
 	protected static final String GETPITCH = "getPitch";
 	protected static final String GETPOS = "getPos";
 	protected static final String GETROTATION = "getRotation";
 	protected static final String GETTILE = "getTile";
-	protected static final String SETDIMENSION = "setDimension"; // EXPERIMENTAL
-																	// AND
-																	// UNSUPPORTED
+	
+	// EXPERIMENTAL AND UNSUPPORTED
+	protected static final String SETDIMENSION = "setDimension"; 
+
 	protected static final String SETDIRECTION = "setDirection";
 	protected static final String SETPITCH = "setPitch";
 	protected static final String SETPOS = "setPos";
