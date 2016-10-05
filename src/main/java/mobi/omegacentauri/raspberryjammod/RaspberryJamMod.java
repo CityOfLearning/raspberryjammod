@@ -1,15 +1,28 @@
 package mobi.omegacentauri.raspberryjammod;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.Set;
 
+import mobi.omegacentauri.raspberryjammod.api.APIServer;
+import mobi.omegacentauri.raspberryjammod.command.AddPythonExternalCommand;
+import mobi.omegacentauri.raspberryjammod.command.CameraCommand;
+import mobi.omegacentauri.raspberryjammod.command.NightVisionExternalCommand;
+import mobi.omegacentauri.raspberryjammod.command.PythonExternalCommand;
+import mobi.omegacentauri.raspberryjammod.command.ScriptExternalCommand;
+import mobi.omegacentauri.raspberryjammod.events.ClientEventHandler;
+import mobi.omegacentauri.raspberryjammod.events.MCEventHandler;
+import mobi.omegacentauri.raspberryjammod.events.MCEventHandlerServer;
+import mobi.omegacentauri.raspberryjammod.util.FileUtils;
+import net.minecraft.client.Minecraft;
 import net.minecraft.command.CommandHandler;
 import net.minecraft.command.ICommand;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -26,8 +39,8 @@ public class RaspberryJamMod {
 	public static final String NAME = "Raspberry Jam Mod";
 	public static ScriptExternalCommand[] scriptExternalCommands = null;
 	public static Configuration configFile;
-	static int portNumber = 4711;
-	static int wsPort = 14711;
+	public static int portNumber = 4711;
+	public static int wsPort = 14711;
 	public static boolean concurrent = true;
 	public static boolean leftClickToo = true;
 	public static boolean useSystemPath = true;
@@ -37,8 +50,8 @@ public class RaspberryJamMod {
 	public static String pythonEmbeddedLocation = "rjm-python";
 	public static boolean integrated = true;
 	public static volatile boolean apiActive = false;
-	static boolean clientOnlyAPI = false;
-	static boolean searchForPort = false;
+	public static boolean clientOnlyAPI = false;
+	public static boolean searchForPort = false;
 	public static int currentPortNumber;
 	public static String serverAddress = null;
 
@@ -91,7 +104,7 @@ public class RaspberryJamMod {
 		// clientOnlyPortNumber = configFile.getInt("Port Number for Client-Only
 		// API", Configuration.CATEGORY_GENERAL, 0, 0, 65535, "Client-only API
 		// port number (normally 0)");
-
+		
 		if (configFile.hasChanged()) {
 			configFile.save();
 		}
@@ -197,6 +210,30 @@ public class RaspberryJamMod {
 			}).start();
 		} catch (IOException e1) {
 			System.out.println("Threw " + e1);
+		}
+		
+		if(!useSystemPath){
+			if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
+				File localpath = Minecraft.getMinecraft().mcDataDir;
+				File path = new File(localpath, RaspberryJamMod.pythonEmbeddedLocation);
+				if(!path.exists()){
+					path.mkdirs();
+					File zip = new File(path, "python.zip");
+					FileUtils.downloadFileWithProgress("https://www.python.org/ftp/python/3.5.2/python-3.5.2-embed-amd64.zip", zip);
+					FileUtils.unZip(zip.getAbsolutePath(), path.getAbsolutePath());
+					zip.delete();
+				}
+			} else {
+				File localpath = MinecraftServer.getServer().getDataDirectory();
+				File path = new File(localpath, RaspberryJamMod.pythonEmbeddedLocation);
+				if(!path.exists()){
+					path.mkdirs();
+					File zip = new File(path, "python.zip");
+					FileUtils.downloadFileWithProgress("https://www.python.org/ftp/python/3.5.2/python-3.5.2-embed-amd64.zip", zip);
+					FileUtils.unZip(zip.getAbsolutePath(), path.getAbsolutePath());
+					zip.delete();
+				}
+			}
 		}
 
 		scriptExternalCommands = new ScriptExternalCommand[] { new PythonExternalCommand(false),
