@@ -32,7 +32,7 @@ import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-@Mod(modid = RaspberryJamMod.MODID, version = RaspberryJamMod.VERSION, name = RaspberryJamMod.NAME, guiFactory = "mobi.omegacentauri.raspberryjammod.GuiFactory", acceptableRemoteVersions = "*", acceptedMinecraftVersions = "[1.8,1.9)")
+@Mod(modid = RaspberryJamMod.MODID, version = RaspberryJamMod.VERSION, name = RaspberryJamMod.NAME, acceptableRemoteVersions = "*", acceptedMinecraftVersions = "[1.8,1.9)")
 public class RaspberryJamMod {
 	public static final String MODID = "raspberryjammod";
 	public static final String VERSION = "0.82";
