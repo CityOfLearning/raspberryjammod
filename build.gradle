@@ -11,7 +11,18 @@ buildscript {
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.1-SNAPSHOT'
     }
 }
+
+repositories {
+    jcenter()
+		
+	maven { 
+		name = "jitpack"
+		url "https://jitpack.io" 
+	}
+}
+
 apply plugin: 'net.minecraftforge.gradle.forge'
+apply plugin: 'maven'
 
 version = "0.82"
 group= "mobi.omegacentauri.raspberryjammod" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
