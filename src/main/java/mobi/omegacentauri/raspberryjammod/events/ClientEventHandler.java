@@ -33,7 +33,7 @@ public class ClientEventHandler {
 		RaspberryJamMod.closeAllScripts();
 		if (RaspberryJamMod.scriptExternalCommands != null) {
 			for (ICommand c : RaspberryJamMod.scriptExternalCommands) {
-				System.out.println("Unregistering " + c.getClass());
+				RaspberryJamMod.logger.info("Unregistering " + c.getClass());
 				RaspberryJamMod.unregisterCommand(net.minecraftforge.client.ClientCommandHandler.instance, c);
 			}
 			RaspberryJamMod.scriptExternalCommands = null;
@@ -61,9 +61,9 @@ public class ClientEventHandler {
 			Object address = event.manager.getRemoteAddress();
 			if (address instanceof InetSocketAddress) {
 				RaspberryJamMod.serverAddress = ((InetSocketAddress) address).getAddress().getHostAddress();
-				System.out.println("Server address " + RaspberryJamMod.serverAddress);
+				RaspberryJamMod.logger.info("Server address " + RaspberryJamMod.serverAddress);
 			} else {
-				System.out.println("No IP address");
+				RaspberryJamMod.logger.info("No IP address");
 			}
 		} catch (Exception e) {
 			RaspberryJamMod.serverAddress = null;
@@ -90,14 +90,13 @@ public class ClientEventHandler {
 	@SubscribeEvent
 	public void onWorldLoaded(WorldEvent.Load event) {
 		RaspberryJamMod.synchronizeConfig();
-		System.out.println("Loading world: " + event.world);
 
 		if (!RaspberryJamMod.clientOnlyAPI) {
 			return;
 		}
 
 		// if (! registeredCommands) {
-		System.out.println("Registering commands");
+		RaspberryJamMod.logger.info("Registering commands");
 		RaspberryJamMod.scriptExternalCommands = new ScriptExternalCommand[] { new PythonExternalCommand(true),
 				new AddPythonExternalCommand(true) };
 		for (ScriptExternalCommand c : RaspberryJamMod.scriptExternalCommands) {
@@ -107,13 +106,12 @@ public class ClientEventHandler {
 
 		if (apiEventHandler == null) {
 			apiEventHandler = new MCEventHandlerClientOnly();
-			FMLCommonHandler.instance().bus().register(apiEventHandler);
 			MinecraftForge.EVENT_BUS.register(apiEventHandler);
 		}
 
 		if (apiServer == null) {
 			try {
-				System.out.println("RaspberryJamMod client only API");
+				RaspberryJamMod.logger.info("RaspberryJamMod client only API");
 				RaspberryJamMod.apiActive = true;
 				if (apiServer == null) {
 					RaspberryJamMod.currentPortNumber = -1;
@@ -128,7 +126,7 @@ public class ClientEventHandler {
 							try {
 								apiServer.communicate();
 							} catch (IOException e) {
-								System.out.println("RaspberryJamMod error " + e);
+								RaspberryJamMod.logger.error("RaspberryJamMod error " + e);
 							} finally {
 								closeAPI();
 							}
@@ -146,8 +144,6 @@ public class ClientEventHandler {
 		if (!RaspberryJamMod.clientOnlyAPI) {
 			return;
 		}
-
-		System.out.println("Closing world: " + event.world);
 
 		closeAPI();
 	}

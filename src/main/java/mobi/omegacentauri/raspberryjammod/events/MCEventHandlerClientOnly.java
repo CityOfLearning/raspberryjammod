@@ -26,7 +26,6 @@ public class MCEventHandlerClientOnly extends MCEventHandler {
 	@SubscribeEvent
 	@SideOnly(Side.CLIENT)
 	public void onChatEvent(ClientChatReceivedEvent event) {
-		System.out.println("ClientChatEvent on client side: " + event.message.toString());
 		APIHandler.ChatDescription cd = new APIHandler.ChatDescription(Minecraft.getMinecraft().thePlayer.getEntityId(),
 				event.message.toString());
 		for (APIHandler apiHandler : apiHandlers) {

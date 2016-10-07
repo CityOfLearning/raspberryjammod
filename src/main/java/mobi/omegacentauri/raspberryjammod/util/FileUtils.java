@@ -17,6 +17,8 @@ import java.security.MessageDigest;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import mobi.omegacentauri.raspberryjammod.RaspberryJamMod;
+
 public class FileUtils {
 
 	public static void copyFile(File from, File to) throws Exception {
@@ -185,7 +187,7 @@ public class FileUtils {
 			zis.closeEntry();
 			zis.close();
 
-			System.out.println("Done");
+			RaspberryJamMod.logger.info("Done Unzipping File");
 
 		} catch (IOException ex) {
 			ex.printStackTrace();

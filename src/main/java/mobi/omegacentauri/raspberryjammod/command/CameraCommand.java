@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
+import mobi.omegacentauri.raspberryjammod.RaspberryJamMod;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.command.CommandException;
@@ -19,7 +20,7 @@ public class CameraCommand implements ICommand {
 			f.setAccessible(true);
 			f.set(object, value);
 		} catch (Exception e) {
-			System.out.println("" + e);
+			RaspberryJamMod.logger.error("" + e);
 		}
 	}
 

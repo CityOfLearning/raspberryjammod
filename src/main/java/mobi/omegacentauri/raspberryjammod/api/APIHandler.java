@@ -256,14 +256,14 @@ public class APIHandler {
 				f.setAccessible(true);
 				f.set(mc.entityRenderer, d);
 			} catch (Exception e) {
-				System.out.println("" + e);
+				RaspberryJamMod.logger.error("" + e);
 			}
 			try {
 				Field f = c.getDeclaredField("thirdPersonDistanceTemp");
 				f.setAccessible(true);
 				f.set(mc.entityRenderer, d);
 			} catch (Exception e) {
-				System.out.println("" + e);
+				RaspberryJamMod.logger.error("" + e);
 			}
 		} else {
 			unknownCommand();
@@ -482,7 +482,7 @@ public class APIHandler {
 			Vec3w pos = Location.decodeVec3w(serverWorlds, x, y, z);
 			if (pos.getWorld() != e.getEntityWorld()) {
 				// e.setWorld(pos.world);
-				System.out.println("World change unsupported");
+				RaspberryJamMod.logger.info("World change unsupported");
 				// TODO: implement moving between worlds
 				return;
 			}
@@ -685,7 +685,7 @@ public class APIHandler {
 			scan.close();
 			scan = null;
 		} catch (Exception e) {
-			System.out.println("" + e);
+			RaspberryJamMod.logger.error("" + e);
 			e.printStackTrace();
 		} finally {
 			if (scan != null) {
