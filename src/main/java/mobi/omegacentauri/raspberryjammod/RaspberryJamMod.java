@@ -6,6 +6,8 @@ import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.logging.log4j.Logger;
+
 import mobi.omegacentauri.raspberryjammod.api.APIServer;
 import mobi.omegacentauri.raspberryjammod.command.AddPythonExternalCommand;
 import mobi.omegacentauri.raspberryjammod.command.CameraCommand;
@@ -54,6 +56,8 @@ public class RaspberryJamMod {
 	public static boolean searchForPort = false;
 	public static int currentPortNumber;
 	public static String serverAddress = null;
+	
+	public static Logger logger;
 
 	public static int closeAllScripts() {
 		if (scriptExternalCommands == null) {
@@ -70,7 +74,7 @@ public class RaspberryJamMod {
 		do {
 			try {
 				// for (Field f : c.getDeclaredFields()) {
-				// System.out.println(f.getName()+" "+f.getType());
+				// RaspberryJamMod.logger.info(f.getName()+" "+f.getType());
 				// }
 				return c.getDeclaredField(name);
 			} catch (Exception e) {
@@ -153,7 +157,6 @@ public class RaspberryJamMod {
 	@Mod.EventHandler
 	@SideOnly(Side.CLIENT)
 	public void Init(FMLInitializationEvent event) {
-		System.out.println("FMLInitializationEvent");
 		clientEventHandler = new ClientEventHandler();
 		MinecraftForge.EVENT_BUS.register(clientEventHandler);
 		nightVisionExternalCommand = new NightVisionExternalCommand(clientEventHandler);
@@ -165,13 +168,11 @@ public class RaspberryJamMod {
 	@Mod.EventHandler
 	@SideOnly(Side.CLIENT)
 	public void onConfigChanged(net.minecraftforge.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent event) {
-		System.out.println("config changed");
+		RaspberryJamMod.logger.info("config changed");
 	}
 
 	@EventHandler
 	public void onServerStarting(FMLServerStartingEvent event) {
-		System.out.println("Server started event");
-
 		synchronizeConfig();
 
 		if (clientOnlyAPI) {
@@ -198,9 +199,9 @@ public class RaspberryJamMod {
 					try {
 						fullAPIServer.communicate();
 					} catch (IOException e) {
-						System.out.println("RaspberryJamMod error " + e);
+						RaspberryJamMod.logger.error("RaspberryJamMod error " + e);
 					} finally {
-						System.out.println("Closing RaspberryJamMod");
+						RaspberryJamMod.logger.info("Closing RaspberryJamMod");
 						if (fullAPIServer != null) {
 							fullAPIServer.close();
 						}
@@ -209,7 +210,7 @@ public class RaspberryJamMod {
 
 			}).start();
 		} catch (IOException e1) {
-			System.out.println("Threw " + e1);
+			RaspberryJamMod.logger.error("Threw " + e1);
 		}
 		
 		if(!useSystemPath){
@@ -273,6 +274,7 @@ public class RaspberryJamMod {
 
 	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
+		RaspberryJamMod.logger = event.getModLog();
 		integrated = true;
 		try {
 			Class.forName("net.minecraft.client.Minecraft");
