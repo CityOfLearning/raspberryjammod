@@ -26,15 +26,6 @@ public class PythonExternalCommand extends ScriptExternalCommand {
 	}
 
 	@Override
-	protected String extraPath() {
-		if (isWindows()) {
-			return "\\python27\\;python27\\";
-		} else {
-			return "";
-		}
-	}
-
-	@Override
 	public List<String> getCommandAliases() {
 		List<String> aliases = new ArrayList<String>();
 		aliases.add(getCommandName());
@@ -49,7 +40,7 @@ public class PythonExternalCommand extends ScriptExternalCommand {
 
 	@Override
 	public String getCommandUsage(ICommandSender sender) {
-		return "python script [arguments]: run script, stopping old one(s) (omit script to stop previous script)";
+		return "python <script> [arguments]: run script, stopping old one(s) (omit script to stop previous script)";
 	}
 
 	@Override
@@ -60,11 +51,6 @@ public class PythonExternalCommand extends ScriptExternalCommand {
 	@Override
 	protected String[] getScriptPaths() {
 		return new String[] { "mcpipy/", "mcpimods/python/" };
-	}
-
-	@Override
-	protected String getScriptProcessorCommand() {
-		return RaspberryJamMod.pythonInterpreter;
 	}
 
 	@Override

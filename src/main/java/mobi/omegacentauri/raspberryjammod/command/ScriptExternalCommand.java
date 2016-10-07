@@ -13,6 +13,7 @@ import java.util.Map;
 
 import mobi.omegacentauri.raspberryjammod.RaspberryJamMod;
 import mobi.omegacentauri.raspberryjammod.api.APIHandler;
+import mobi.omegacentauri.raspberryjammod.util.PathUtility;
 import net.minecraft.client.Minecraft;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommand;
@@ -27,9 +28,9 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 
 public abstract class ScriptExternalCommand implements ICommand {
-	public static boolean isWindows() {
-		return System.getProperty("os.name").startsWith("Windows");
-	}
+//	public static boolean isWindows() {
+//		return System.getProperty("os.name").startsWith("Windows");
+//	}
 
 	private List<Process> runningScripts;
 	final String scriptProcessorPath;
@@ -38,7 +39,7 @@ public abstract class ScriptExternalCommand implements ICommand {
 	public ScriptExternalCommand(boolean clientSide) {
 		this.clientSide = clientSide;
 		runningScripts = new LinkedList<Process>();
-		String path = getScriptProcessorPath();
+		String path = PathUtility.getPythonExecutablePath();//getPythonExecutablePath();
 		if (path.contains("/") || path.contains(System.getProperty("file.separator"))) {
 			scriptProcessorPath = new File(path).getAbsolutePath().toString();
 		} else {
@@ -136,56 +137,6 @@ public abstract class ScriptExternalCommand implements ICommand {
 	}
 
 	abstract protected String[] getScriptPaths();
-
-	abstract protected String getScriptProcessorCommand();
-
-	protected String getScriptProcessorPath() {
-		String base = getScriptProcessorCommand();
-
-		String pathSep = System.getProperty("path.separator");
-		String fileSep = System.getProperty("file.separator");
-		if (base.contains("/") || base.contains(fileSep)) {
-			return base;
-		}
-
-		String pathVar = "";
-
-		if (RaspberryJamMod.useSystemPath) {
-			pathVar = System.getenv("PATH");
-		} else {
-			if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
-				File localpath = Minecraft.getMinecraft().mcDataDir;
-				pathVar = new File(localpath, RaspberryJamMod.pythonEmbeddedLocation).getAbsolutePath();
-			} else {
-				File localpath = MinecraftServer.getServer().getDataDirectory();
-				pathVar = new File(localpath, RaspberryJamMod.pythonEmbeddedLocation).getAbsolutePath();
-			}
-		}
-
-		String extra = extraPath();
-
-		if (pathVar == null) {
-			if (extra.length() == 0) {
-				return base;
-			} else {
-				pathVar = extra;
-			}
-		} else if (extra.length() > 0) {
-			pathVar = pathVar + pathSep + extra;
-		}
-
-		String exeExt = isWindows() ? ".exe" : "";
-
-		String[] paths = pathVar.split(pathSep);
-
-		for (String dir : paths) {
-			String p = dir + fileSep + base + exeExt;
-			if (new File(p).canExecute()) {
-				return p;
-			}
-		}
-		return base;
-	}
 
 	protected List<String> getScripts(String subdir) {
 		List<String> scripts = new ArrayList<String>();
@@ -326,7 +277,7 @@ public abstract class ScriptExternalCommand implements ICommand {
 
 		pb.command(cmd);
 		try {
-			System.out.println("Running " + script);
+			RaspberryJamMod.logger.info("Running " + script);
 			Process runningScript = pb.start();
 			runningScripts.add(runningScript);
 			gobble(runningScript.getInputStream(), player, "");
@@ -342,6 +293,6 @@ public abstract class ScriptExternalCommand implements ICommand {
 		// by using .., and also don't allow passing options to the script
 		// processor.
 		return !path.startsWith(".") && !path.contains("/.")
-				&& !(isWindows() && (path.contains(":") || path.contains("\\.")));
+				&& !(PathUtility.isWindows() && (path.contains(":") || path.contains("\\.")));
 	}
 }
