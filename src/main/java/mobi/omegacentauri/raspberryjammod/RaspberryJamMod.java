@@ -17,6 +17,7 @@ import mobi.omegacentauri.raspberryjammod.command.ScriptExternalCommand;
 import mobi.omegacentauri.raspberryjammod.events.ClientEventHandler;
 import mobi.omegacentauri.raspberryjammod.events.MCEventHandler;
 import mobi.omegacentauri.raspberryjammod.events.MCEventHandlerServer;
+import mobi.omegacentauri.raspberryjammod.network.NetworkHandler;
 import mobi.omegacentauri.raspberryjammod.util.FileUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.command.CommandHandler;
@@ -31,6 +32,7 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
+import net.minecraftforge.fml.common.eventhandler.EventBus;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -56,8 +58,10 @@ public class RaspberryJamMod {
 	public static boolean searchForPort = false;
 	public static int currentPortNumber;
 	public static String serverAddress = null;
-	
+
 	public static Logger logger;
+
+	public static final EventBus EVENT_BUS = new EventBus();
 
 	public static int closeAllScripts() {
 		if (scriptExternalCommands == null) {
@@ -97,8 +101,8 @@ public class RaspberryJamMod {
 				"Detect sword left-click");
 		useSystemPath = configFile.getBoolean("Search System Path", Configuration.CATEGORY_GENERAL, true,
 				"Search for python on the system path or use a local embedded version");
-		pythonEmbeddedLocation = configFile.getString("Embedded Python Location", Configuration.CATEGORY_GENERAL, "rjm-python",
-				"Relative to .minecraft folder or server jar");
+		pythonEmbeddedLocation = configFile.getString("Embedded Python Location", Configuration.CATEGORY_GENERAL,
+				"rjm-python", "Relative to .minecraft folder or server jar");
 		pythonInterpreter = configFile.getString("Python Interpreter", Configuration.CATEGORY_GENERAL, "python",
 				"Python interpreter");
 		globalChatMessages = configFile.getBoolean("Messages Go To All", Configuration.CATEGORY_GENERAL, true,
@@ -108,7 +112,7 @@ public class RaspberryJamMod {
 		// clientOnlyPortNumber = configFile.getInt("Port Number for Client-Only
 		// API", Configuration.CATEGORY_GENERAL, 0, 0, 65535, "Client-only API
 		// port number (normally 0)");
-		
+
 		if (configFile.hasChanged()) {
 			configFile.save();
 		}
@@ -212,25 +216,27 @@ public class RaspberryJamMod {
 		} catch (IOException e1) {
 			RaspberryJamMod.logger.error("Threw " + e1);
 		}
-		
-		if(!useSystemPath){
+
+		if (!useSystemPath) {
 			if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
 				File localpath = Minecraft.getMinecraft().mcDataDir;
 				File path = new File(localpath, RaspberryJamMod.pythonEmbeddedLocation);
-				if(!path.exists()){
+				if (!path.exists()) {
 					path.mkdirs();
 					File zip = new File(path, "python.zip");
-					FileUtils.downloadFileWithProgress("https://www.python.org/ftp/python/3.5.2/python-3.5.2-embed-amd64.zip", zip);
+					FileUtils.downloadFileWithProgress(
+							"https://www.python.org/ftp/python/3.5.2/python-3.5.2-embed-amd64.zip", zip);
 					FileUtils.unZip(zip.getAbsolutePath(), path.getAbsolutePath());
 					zip.delete();
 				}
 			} else {
 				File localpath = MinecraftServer.getServer().getDataDirectory();
 				File path = new File(localpath, RaspberryJamMod.pythonEmbeddedLocation);
-				if(!path.exists()){
+				if (!path.exists()) {
 					path.mkdirs();
 					File zip = new File(path, "python.zip");
-					FileUtils.downloadFileWithProgress("https://www.python.org/ftp/python/3.5.2/python-3.5.2-embed-amd64.zip", zip);
+					FileUtils.downloadFileWithProgress(
+							"https://www.python.org/ftp/python/3.5.2/python-3.5.2-embed-amd64.zip", zip);
 					FileUtils.unZip(zip.getAbsolutePath(), path.getAbsolutePath());
 					zip.delete();
 				}
@@ -275,6 +281,9 @@ public class RaspberryJamMod {
 	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
 		RaspberryJamMod.logger = event.getModLog();
+
+		NetworkHandler.init();
+
 		integrated = true;
 		try {
 			Class.forName("net.minecraft.client.Minecraft");
