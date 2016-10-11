@@ -24,13 +24,8 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.relauncher.Side;
 
 public abstract class ScriptExternalCommand implements ICommand {
-//	public static boolean isWindows() {
-//		return System.getProperty("os.name").startsWith("Windows");
-//	}
 
 	private List<Process> runningScripts;
 	final String scriptProcessorPath;
@@ -39,7 +34,7 @@ public abstract class ScriptExternalCommand implements ICommand {
 	public ScriptExternalCommand(boolean clientSide) {
 		this.clientSide = clientSide;
 		runningScripts = new LinkedList<Process>();
-		String path = PathUtility.getPythonExecutablePath();//getPythonExecutablePath();
+		String path = PathUtility.getPythonExecutablePath();
 		if (path.contains("/") || path.contains(System.getProperty("file.separator"))) {
 			scriptProcessorPath = new File(path).getAbsolutePath().toString();
 		} else {

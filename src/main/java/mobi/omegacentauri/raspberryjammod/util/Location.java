@@ -88,12 +88,12 @@ public class Location extends BlockPos {
 
 	public Location(World world, double x, double y, double z) {
 		super(x, y, z);
-		this.setWorld(world);
+		setWorld(world);
 	}
 
 	Location(World world, int x, int y, int z) {
 		super(x, y, z);
-		this.setWorld(world);
+		setWorld(world);
 	}
 
 	public World getWorld() {

@@ -113,9 +113,9 @@ public class APIHandler {
 	protected static final String WORLDSETTING = "world.setting";
 
 	// EXPERIMENTAL AND UNSUPPORTED
-	protected static final String GETLIGHTLEVEL = "block.getLightLevel"; 
-	protected static final String SETLIGHTLEVEL = "block.setLightLevel"; 
-	
+	protected static final String GETLIGHTLEVEL = "block.getLightLevel";
+	protected static final String SETLIGHTLEVEL = "block.setLightLevel";
+
 	protected static final String EVENTSBLOCKHITS = "events.block.hits";
 	protected static final String EVENTSCHATPOSTS = "events.chat.posts";
 
@@ -127,18 +127,18 @@ public class APIHandler {
 	protected static final String GETENTITYID = "getEntityId";
 
 	// EXPERIMENTAL AND UNSUPPORTED
-	protected static final String SETDEBUG = "setDebug"; 
-	protected static final String SETDISTANCE = "setDistance"; 
-	
+	protected static final String SETDEBUG = "setDebug";
+	protected static final String SETDISTANCE = "setDistance";
+
 	// player.* or entity.*
 	protected static final String GETDIRECTION = "getDirection";
 	protected static final String GETPITCH = "getPitch";
 	protected static final String GETPOS = "getPos";
 	protected static final String GETROTATION = "getRotation";
 	protected static final String GETTILE = "getTile";
-	
+
 	// EXPERIMENTAL AND UNSUPPORTED
-	protected static final String SETDIMENSION = "setDimension"; 
+	protected static final String SETDIMENSION = "setDimension";
 
 	protected static final String SETDIRECTION = "setDirection";
 	protected static final String SETPITCH = "setPitch";
@@ -197,7 +197,7 @@ public class APIHandler {
 
 	public APIHandler(MCEventHandler eventHandler, PrintWriter writer) throws IOException {
 		this.eventHandler = eventHandler;
-		this.setWriter(writer);
+		setWriter(writer);
 		havePlayer = false;
 		playerMP = null;
 		detectLeftClick = RaspberryJamMod.leftClickToo;
@@ -614,6 +614,10 @@ public class APIHandler {
 		return null;
 	}
 
+	public PrintWriter getWriter() {
+		return writer;
+	}
+
 	private boolean holdingSword(EntityPlayer player) {
 		ItemStack item = player.getHeldItem();
 		if (item != null) {
@@ -981,6 +985,10 @@ public class APIHandler {
 		return true;
 	}
 
+	public void setWriter(PrintWriter writer) {
+		this.writer = writer;
+	}
+
 	protected void spawnEntity(Scanner scan) {
 		String entityId = scan.next();
 		double x0 = scan.nextDouble();
@@ -1042,21 +1050,13 @@ public class APIHandler {
 		if (particle == null) {
 			fail("Cannot find particle type");
 		} else {
-			((WorldServer) pos.getWorld()).spawnParticle(particle, false, pos.xCoord, pos.yCoord, pos.zCoord, count, dx, dy,
-					dz, speed, extras);
+			((WorldServer) pos.getWorld()).spawnParticle(particle, false, pos.xCoord, pos.yCoord, pos.zCoord, count, dx,
+					dy, dz, speed, extras);
 		}
 	}
 
 	protected void unknownCommand() {
 		fail("unknown command");
-	}
-
-	public PrintWriter getWriter() {
-		return writer;
-	}
-
-	public void setWriter(PrintWriter writer) {
-		this.writer = writer;
 	}
 
 }

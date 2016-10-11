@@ -9,10 +9,14 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 
 public class PathUtility {
-	public static boolean isWindows() {
-		return System.getProperty("os.name").startsWith("Windows");
+	private static String extraPath() {
+		if (isWindows()) {
+			return "\\python27\\;python27\\";
+		} else {
+			return "";
+		}
 	}
-	
+
 	public static String getPythonExecutablePath() {
 		String base = RaspberryJamMod.pythonInterpreter;
 
@@ -60,12 +64,8 @@ public class PathUtility {
 		}
 		return base;
 	}
-	
-	private static String extraPath() {
-		if (isWindows()) {
-			return "\\python27\\;python27\\";
-		} else {
-			return "";
-		}
+
+	public static boolean isWindows() {
+		return System.getProperty("os.name").startsWith("Windows");
 	}
 }

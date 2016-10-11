@@ -137,17 +137,9 @@ public class FileUtils {
 		return entryBuffer.toByteArray();
 	}
 
-	public static void writeFile(File dest, String str) throws Exception {
-		createFileSafely(dest);
-		FileWriter fw = new FileWriter(dest);
-		fw.write(str);
-		fw.flush();
-		fw.close();
-	}
-	
 	/**
 	 * Unzip it
-	 * 
+	 *
 	 * @param zipFile
 	 *            input zip file
 	 * @param output
@@ -192,5 +184,13 @@ public class FileUtils {
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		}
+	}
+
+	public static void writeFile(File dest, String str) throws Exception {
+		createFileSafely(dest);
+		FileWriter fw = new FileWriter(dest);
+		fw.write(str);
+		fw.flush();
+		fw.close();
 	}
 }
