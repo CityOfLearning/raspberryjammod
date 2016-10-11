@@ -6,11 +6,13 @@ public class HandshakeImpl1Client extends HandshakedataImpl1 implements ClientHa
 	public HandshakeImpl1Client() {
 	}
 
-	public void setResourceDescriptor( String resourcedescriptor ) throws IllegalArgumentException {
-		this.resourcedescriptor = resourcedescriptor;
-	}
-
+	@Override
 	public String getResourceDescriptor() {
 		return resourcedescriptor;
+	}
+
+	@Override
+	public void setResourceDescriptor(String resourcedescriptor) throws IllegalArgumentException {
+		this.resourcedescriptor = resourcedescriptor;
 	}
 }

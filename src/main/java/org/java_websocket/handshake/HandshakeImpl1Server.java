@@ -8,22 +8,23 @@ public class HandshakeImpl1Server extends HandshakedataImpl1 implements ServerHa
 	}
 
 	@Override
+	public short getHttpStatus() {
+		return httpstatus;
+	}
+
+	@Override
 	public String getHttpStatusMessage() {
 		return httpstatusmessage;
 	}
 
 	@Override
-	public short getHttpStatus() {
-		return httpstatus;
-	}
-
-	public void setHttpStatusMessage( String message ) {
-		this.httpstatusmessage = message;
-	}
-
-	public void setHttpStatus( short status ) {
+	public void setHttpStatus(short status) {
 		httpstatus = status;
 	}
 
+	@Override
+	public void setHttpStatusMessage(String message) {
+		httpstatusmessage = message;
+	}
 
 }
