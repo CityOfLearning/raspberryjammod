@@ -42,7 +42,24 @@ minecraft {
 }
 
 dependencies {
+	// https://mvnrepository.com/artifact/org.java-websocket/Java-WebSocket
+	compile group: 'org.java-websocket', name: 'Java-WebSocket', version: '1.3.0'
+}
 
+jar {	
+	from ('src/main/java/assets'){
+    	into 'assets'
+    }
+	
+    from (sourceSets.main.output) {
+        setDuplicatesStrategy(DuplicatesStrategy.EXCLUDE)
+    }
+    
+    configurations.compile.each{ dep ->
+        from(project.zipTree(dep)){
+            exclude 'META-ING', 'META-INF/**', '**/LICENSE.txt'
+        }
+    }
 }
 
 processResources
