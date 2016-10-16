@@ -46,8 +46,8 @@ public class RaspberryJamMod {
 	public static final String VERSION = "0.82";
 	public static final String NAME = "Raspberry Jam Mod";
 	public static ScriptExternalCommand[] scriptExternalCommands = null;
-	
-	//config options
+
+	// config options
 	public static Configuration configFile;
 	public static boolean concurrent = true;
 	public static boolean leftClickToo = true;
@@ -59,20 +59,20 @@ public class RaspberryJamMod {
 	public static boolean integrated = true;
 	public static volatile boolean apiActive = false;
 	public static boolean clientOnlyAPI = false;
-	
-	//websocket stuff
+
+	// websocket stuff
 	public static int portNumber = 4711;
 	public static int wsPort = 14711;
 	public static boolean searchForPort = false;
 	public static int currentPortNumber;
 	public static String serverAddress = null;
-	
-	//player scripts so admins/mentors can destroy running scripts
+
+	// player scripts so admins/mentors can destroy running scripts
 	public static Map<EntityPlayer, Process> playerProcesses = Maps.newHashMap();
 
 	public static Logger logger;
 
-	//our new event bus for code related events
+	// our new event bus for code related events
 	public static final EventBus EVENT_BUS = new EventBus();
 
 	public static int closeAllScripts() {
@@ -160,7 +160,7 @@ public class RaspberryJamMod {
 	}
 
 	private APIServer fullAPIServer = null;
-	
+
 	private NightVisionExternalCommand nightVisionExternalCommand = null;
 
 	private CameraCommand cameraCommand = null;
@@ -210,21 +210,17 @@ public class RaspberryJamMod {
 					false);
 			currentPortNumber = fullAPIServer.getPortNumber();
 
-			new Thread(new Runnable() {
-				@Override
-				public void run() {
-					try {
-						fullAPIServer.communicate();
-					} catch (IOException e) {
-						RaspberryJamMod.logger.error("RaspberryJamMod error " + e);
-					} finally {
-						RaspberryJamMod.logger.info("Closing RaspberryJamMod");
-						if (fullAPIServer != null) {
-							fullAPIServer.close();
-						}
+			new Thread(() -> {
+				try {
+					fullAPIServer.communicate();
+				} catch (IOException e) {
+					RaspberryJamMod.logger.error("RaspberryJamMod error " + e);
+				} finally {
+					RaspberryJamMod.logger.info("Closing RaspberryJamMod");
+					if (fullAPIServer != null) {
+						fullAPIServer.close();
 					}
 				}
-
 			}).start();
 		} catch (IOException e1) {
 			RaspberryJamMod.logger.error("Threw " + e1);
@@ -237,8 +233,7 @@ public class RaspberryJamMod {
 				if (!path.exists()) {
 					path.mkdirs();
 					File zip = new File(path, "python.zip");
-					FileUtils.downloadFile(
-							"https://www.python.org/ftp/python/3.5.2/python-3.5.2-embed-amd64.zip", zip);
+					FileUtils.downloadFile("https://www.python.org/ftp/python/3.5.2/python-3.5.2-embed-amd64.zip", zip);
 					FileUtils.unZip(zip.getAbsolutePath(), path.getAbsolutePath());
 					zip.delete();
 				}
@@ -248,8 +243,7 @@ public class RaspberryJamMod {
 				if (!path.exists()) {
 					path.mkdirs();
 					File zip = new File(path, "python.zip");
-					FileUtils.downloadFile(
-							"https://www.python.org/ftp/python/3.5.2/python-3.5.2-embed-amd64.zip", zip);
+					FileUtils.downloadFile("https://www.python.org/ftp/python/3.5.2/python-3.5.2-embed-amd64.zip", zip);
 					FileUtils.unZip(zip.getAbsolutePath(), path.getAbsolutePath());
 					zip.delete();
 				}
@@ -296,7 +290,7 @@ public class RaspberryJamMod {
 		RaspberryJamMod.logger = event.getModLog();
 
 		NetworkHandler.init();
-		
+
 		APIRegistry.init();
 
 		integrated = true;

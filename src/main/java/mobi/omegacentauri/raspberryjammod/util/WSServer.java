@@ -91,6 +91,7 @@ public class WSServer extends WebSocketServer {
 		try {
 			APIHandler apiHandler = controlServer ? new APIHandler(eventHandler, pw)
 					: new APIHandlerClientOnly(eventHandler, pw);
+
 			handlers.put(conn, apiHandler);
 		} catch (IOException e) {
 		}

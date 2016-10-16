@@ -36,13 +36,17 @@ public class APIHandler {
 			}
 		}
 	}
-		
+
 	protected MCEventHandler eventHandler;
 
 	public APIHandler(MCEventHandler eventHandler, PrintWriter writer) throws IOException {
 		this.eventHandler = eventHandler;
 		APIRegistry.Python2MinecraftApi.setWriter(writer);
 		eventHandler.registerAPIHandler(this);
+	}
+
+	public void addChatDescription(ChatDescription cd) {
+		APIRegistry.Python2MinecraftApi.addChatDescription(cd);
 	}
 
 	public void close() {
@@ -53,15 +57,15 @@ public class APIHandler {
 		System.err.println("Error: " + string);
 		APIRegistry.Python2MinecraftApi.sendLine("Fail");
 	}
-	
+
+	public PrintWriter getWriter() {
+		return APIRegistry.Python2MinecraftApi.getWriter();
+	}
+
 	public void onClick(PlayerInteractEvent event) {
 		APIRegistry.Python2MinecraftApi.onClick(event);
 	}
 
-	public void addChatDescription(ChatDescription cd) {
-		APIRegistry.Python2MinecraftApi.addChatDescription(cd);
-	}
-	
 	public void process(String clientSentence) {
 		if (!APIRegistry.Python2MinecraftApi.refresh()) {
 			return;
@@ -106,16 +110,12 @@ public class APIHandler {
 		}
 	}
 
-	public PrintWriter getWriter() {
-		return APIRegistry.Python2MinecraftApi.getWriter();
-	}
-	
 	protected void runCommand(String cmd, String args, Scanner scan)
 			throws InputMismatchException, NoSuchElementException, IndexOutOfBoundsException {
-		
-			if (!APIRegistry.runCommand(cmd, args, scan, eventHandler)) {
-				unknownCommand();
-			}
+
+		if (!APIRegistry.runCommand(cmd, args, scan, eventHandler)) {
+			unknownCommand();
+		}
 	}
 
 	protected void unknownCommand() {

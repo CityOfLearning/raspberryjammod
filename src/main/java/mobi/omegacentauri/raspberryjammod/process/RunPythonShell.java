@@ -168,14 +168,14 @@ public class RunPythonShell {
 			builder.command(cmd);
 
 			runningScript = builder.start();
-			
-			//we dont have to worry about checking if the script is alive since it gets destroyed earlier
-			if(RaspberryJamMod.playerProcesses.containsKey(player)){
+
+			// we dont have to worry about checking if the script is alive since
+			// it gets destroyed earlier
+			if (RaspberryJamMod.playerProcesses.containsKey(player)) {
 				RaspberryJamMod.playerProcesses.replace(player, runningScript);
 			} else {
 				RaspberryJamMod.playerProcesses.put(player, runningScript);
 			}
-			
 
 			gobble(runningScript.getInputStream(), player, "");
 			gobbleError(runningScript.getErrorStream(), player, "[ERR] ");

@@ -27,8 +27,8 @@ public class MCEventHandlerClientOnly extends MCEventHandler {
 	@SubscribeEvent
 	@SideOnly(Side.CLIENT)
 	public void onChatEvent(ClientChatReceivedEvent event) {
-		APIRegistry.Python2MinecraftApi.ChatDescription cd = new APIRegistry.Python2MinecraftApi.ChatDescription(Minecraft.getMinecraft().thePlayer.getEntityId(),
-				event.message.toString());
+		APIRegistry.Python2MinecraftApi.ChatDescription cd = new APIRegistry.Python2MinecraftApi.ChatDescription(
+				Minecraft.getMinecraft().thePlayer.getEntityId(), event.message.toString());
 		for (APIHandler apiHandler : apiHandlers) {
 			apiHandler.addChatDescription(cd);
 		}

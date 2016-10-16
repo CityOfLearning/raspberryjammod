@@ -1,15 +1,12 @@
 package mobi.omegacentauri.raspberryjammod.api;
 
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.InputMismatchException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 import com.google.common.collect.Maps;
@@ -50,44 +47,9 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
 public class APIRegistry {
 
-	public static boolean initd = false;
-
 	@FunctionalInterface
 	public static interface CommandRunnable {
 		void execute(String args, Scanner scan, MCEventHandler eventHandler);
-	}
-
-	public static Map<String, CommandRunnable> commands = Maps.newHashMap();
-
-	public static void registerCommand(String name, CommandRunnable executableCode) {
-		try {
-			commands.put(name, executableCode);
-			RaspberryJamMod.logger.error("Registering Command: " + name);
-		} catch (Exception e) {
-			RaspberryJamMod.logger.error("Command already registered");
-		}
-	}
-
-	public static CommandRunnable getExectuableCode(String name) {
-		return commands.get(name);
-	}
-
-	public static void setExectuableCode(String name, CommandRunnable code) {
-		commands.replace(name, code);
-	}
-
-	public static boolean runCommand(String name, String args, Scanner scan, MCEventHandler eventHandler) {
-		try {
-			RaspberryJamMod.logger.error("Executing Command: " + name);
-			commands.get(name).execute(args, scan, eventHandler);
-		} catch (Exception e) {
-			return false;
-		}
-		return true;
-	}
-
-	public static void init() {
-		Python2MinecraftApi.init();
 	}
 
 	public static class Python2MinecraftApi {
@@ -201,55 +163,23 @@ public class APIRegistry {
 
 		protected static boolean useClientMethods = false;
 
-		public static boolean doesUseClientMethods() {
-			return useClientMethods;
-		}
-
-		public static void setUseClientMethods(boolean state) {
-			useClientMethods = state;
-		}
-
-		protected static String getRest(Scanner scan) {
-			StringBuilder out = new StringBuilder();
-
-			while (scan.hasNext()) {
-				if (out.length() > 0) {
-					out.append(",");
-				}
-				out.append(scan.next());
-			}
-			return out.toString();
-		}
-
-		public static void globalMessage(String message) {
-			for (World w : MinecraftServer.getServer().worldServers) {
-				for (EntityPlayer p : w.playerEntities) {
-					p.addChatComponentMessage(new ChatComponentText(message));
-				}
-			}
-		}
-
-		public static int trunc(double x) {
-			return (int) Math.floor(x);
-		}
-
 		protected static World[] serverWorlds;
+
 		protected static MCEventHandler eventHandler;
+
 		protected static boolean listening = true;
+
 		protected static Minecraft mc;
+
 		protected static PrintWriter writer = null;
+
 		protected static boolean includeNBTWithData = false;
 		protected static boolean havePlayer;
 		protected static int playerId;
-
 		protected static EntityPlayerMP playerMP;
-
 		protected static List<HitDescription> hits = new LinkedList<HitDescription>();
-
 		protected static List<ChatDescription> chats = new LinkedList<ChatDescription>();
-
 		private volatile static boolean restrictToSword = true;
-
 		private volatile static boolean detectLeftClick = RaspberryJamMod.leftClickToo;
 
 		public static void addChatDescription(ChatDescription cd) {
@@ -262,7 +192,7 @@ public class APIRegistry {
 		}
 
 		protected static void chat(String msg) {
-			if (!RaspberryJamMod.integrated || RaspberryJamMod.globalChatMessages && !useClientMethods) {
+			if (!RaspberryJamMod.integrated || (RaspberryJamMod.globalChatMessages && !useClientMethods)) {
 				globalMessage(msg);
 			} else {
 				mc.thePlayer.addChatComponentMessage(new ChatComponentText(msg));
@@ -274,16 +204,8 @@ public class APIRegistry {
 			chats.clear();
 		}
 
-		public void clearChats() {
-			synchronized (chats) {
-				chats.clear();
-			}
-		}
-
-		public void clearHits() {
-			synchronized (hits) {
-				hits.clear();
-			}
+		public static boolean doesUseClientMethods() {
+			return useClientMethods;
 		}
 
 		protected static void entityCommand(int id, String cmd, Scanner scan) {
@@ -535,12 +457,6 @@ public class APIRegistry {
 			}
 		}
 
-		public int eventCount() {
-			synchronized (hits) {
-				return hits.size();
-			}
-		}
-
 		protected static void fail(String string) {
 			System.err.println("Error: " + string);
 			sendLine("Fail");
@@ -589,6 +505,18 @@ public class APIRegistry {
 			return out;
 		}
 
+		protected static String getRest(Scanner scan) {
+			StringBuilder out = new StringBuilder();
+
+			while (scan.hasNext()) {
+				if (out.length() > 0) {
+					out.append(",");
+				}
+				out.append(scan.next());
+			}
+			return out.toString();
+		}
+
 		protected static Entity getServerEntityByID(int id) {
 			if (!useClientMethods) {
 				if (id == playerId) {
@@ -615,256 +543,20 @@ public class APIRegistry {
 			return writer;
 		}
 
+		public static void globalMessage(String message) {
+			for (World w : MinecraftServer.getServer().worldServers) {
+				for (EntityPlayer p : w.playerEntities) {
+					p.addChatComponentMessage(new ChatComponentText(message));
+				}
+			}
+		}
+
 		protected static boolean holdingSword(EntityPlayer player) {
 			ItemStack item = player.getHeldItem();
 			if (item != null) {
 				return item.getItem() instanceof ItemSword;
 			}
 			return false;
-		}
-
-		protected static float normalizeAngle(float angle) {
-			angle = angle % 360;
-			if (angle <= -180) {
-				angle += 360;
-			}
-			if (angle > 180) {
-				angle -= 360;
-			}
-			return angle;
-		}
-
-		public static void onClick(PlayerInteractEvent event) {
-			if ((event.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK)
-					|| (detectLeftClick && (event.action == PlayerInteractEvent.Action.LEFT_CLICK_BLOCK))) {
-				if (!restrictToSword || holdingSword(event.entityPlayer)) {
-					synchronized (hits) {
-						if (hits.size() >= MAX_HITS) {
-							hits.remove(0);
-						}
-						hits.add(new HitDescription(eventHandler.getWorlds(), event));
-					}
-				}
-			}
-			if (eventHandler.stopChanges) {
-				event.setCanceled(true);
-			}
-		}
-
-		protected static void removeEntity(int id) {
-			Entity e = getServerEntityByID(id);
-			if (e != null) {
-				e.getEntityWorld().removeEntity(e);
-			}
-		}
-
-		protected static void sendLine(BlockPos pos) {
-			sendLine("" + pos.getX() + "," + pos.getY() + "," + pos.getZ());
-		}
-
-		protected static void sendLine(double x) {
-			sendLine(Double.toString(x));
-		}
-
-		protected static void sendLine(int x) {
-			sendLine(Integer.toString(x));
-		}
-
-		static void sendLine(String string) {
-			try {
-				getWriter().print(string + "\n");
-				getWriter().flush();
-			} catch (Exception e) {
-			}
-		}
-
-		protected static void sendLine(Vec3 v) {
-			sendLine("" + v.xCoord + "," + v.yCoord + "," + v.zCoord);
-		}
-
-		static boolean refresh() {
-			if (!useClientMethods) {
-				serverWorlds = MinecraftServer.getServer().worldServers;
-
-				if (serverWorlds == null) {
-					fail("Worlds not available");
-					return false;
-				}
-
-				if (!havePlayer) {
-					if (RaspberryJamMod.integrated) {
-						mc = Minecraft.getMinecraft();
-
-						if (mc == null) {
-							fail("Minecraft client not yet available");
-						}
-
-						if (mc.thePlayer == null) {
-							fail("Client player not available");
-							return false;
-						}
-						playerId = mc.thePlayer.getEntityId();
-						for (World w : serverWorlds) {
-							Entity e = w.getEntityByID(playerId);
-							if (e != null) {
-								playerMP = (EntityPlayerMP) e;
-							}
-						}
-					} else {
-						playerMP = null;
-						int firstId = 0;
-
-						for (World w : serverWorlds) {
-							for (EntityPlayer p : w.playerEntities) {
-								int id = p.getEntityId();
-								if ((playerMP == null) || (id < firstId)) {
-									firstId = id;
-									playerMP = (EntityPlayerMP) p;
-								}
-							}
-						}
-					}
-					if (playerMP == null) {
-						fail("Player not found");
-						return false;
-					}
-					havePlayer = true;
-				}
-				return true;
-			} else {
-				if (!RaspberryJamMod.integrated) {
-					fail("This requires the client");
-					return false;
-				}
-
-				mc = Minecraft.getMinecraft();
-				if (mc == null) {
-					fail("Minecraft client not yet available");
-					return false;
-				}
-
-				serverWorlds = new World[] { mc.theWorld };
-
-				if (mc.thePlayer == null) {
-					fail("Client player not available");
-					return false;
-				}
-
-				playerId = mc.thePlayer.getEntityId();
-				playerMP = null;
-				havePlayer = true;
-				return true;
-			}
-		}
-
-		public static void setWriter(PrintWriter p_writer) {
-			writer = p_writer;
-		}
-
-		protected static void spawnEntity(Scanner scan) {
-			String entityId = scan.next();
-			double x0 = scan.nextDouble();
-			double y0 = scan.nextDouble();
-			double z0 = scan.nextDouble();
-			Vec3w pos = Location.decodeVec3w(serverWorlds, x0, y0, z0);
-			String tagString = getRest(scan);
-			Entity entity;
-			if (tagString.length() > 0) {
-				NBTTagCompound tags;
-				try {
-					tags = JsonToNBT.getTagFromJson(tagString);
-				} catch (NBTException e) {
-					fail("Cannot parse tags");
-					return;
-				}
-				tags.setString("id", entityId);
-				entity = EntityList.createEntityFromNBT(tags, pos.getWorld());
-			} else {
-				entity = EntityList.createEntityByName(entityId, pos.getWorld());
-			}
-
-			if (entity == null) {
-				fail("Cannot create entity");
-			} else {
-				entity.setPositionAndUpdate(pos.xCoord, pos.yCoord, pos.zCoord);
-				pos.getWorld().spawnEntityInWorld(entity);
-				sendLine(entity.getEntityId());
-			}
-		}
-
-		protected static void spawnParticle(Scanner scan) {
-			if (!useClientMethods) {
-			String particleName = scan.next();
-			double x0 = scan.nextDouble();
-			double y0 = scan.nextDouble();
-			double z0 = scan.nextDouble();
-			Vec3w pos = Location.decodeVec3w(serverWorlds, x0, y0, z0);
-			double dx = scan.nextDouble();
-			double dy = scan.nextDouble();
-			double dz = scan.nextDouble();
-			double speed = scan.nextDouble();
-			int count = scan.nextInt();
-
-			int[] extras = null;
-			EnumParticleTypes particle = null;
-			for (EnumParticleTypes e : EnumParticleTypes.values()) {
-				if (e.getParticleName().equals(particleName)) {
-					particle = e;
-					extras = new int[e.getArgumentCount()];
-					try {
-						for (int i = 0; i < extras.length; i++) {
-							extras[i] = scan.nextInt();
-						}
-					} catch (Exception exc) {
-					}
-					break;
-				}
-			}
-			if (particle == null) {
-				fail("Cannot find particle type");
-			} else {
-				((WorldServer) pos.getWorld()).spawnParticle(particle, false, pos.xCoord, pos.yCoord, pos.zCoord, count,
-						dx, dy, dz, speed, extras);
-			}
-			}else {
-				String particleName = scan.next();
-				double x0 = scan.nextDouble();
-				double y0 = scan.nextDouble();
-				double z0 = scan.nextDouble();
-				Vec3w pos = Location.decodeVec3w(serverWorlds, x0, y0, z0);
-				double dx = scan.nextDouble();
-				double dy = scan.nextDouble();
-				double dz = scan.nextDouble();
-				scan.nextDouble();
-				int count = scan.nextInt();
-
-				int[] extras = null;
-				EnumParticleTypes particle = null;
-				for (EnumParticleTypes e : EnumParticleTypes.values()) {
-					if (e.getParticleName().equals(particleName)) {
-						particle = e;
-						extras = new int[e.getArgumentCount()];
-						try {
-							for (int i = 0; i < extras.length; i++) {
-								extras[i] = scan.nextInt();
-							}
-						} catch (Exception exc) {
-						}
-						break;
-					}
-				}
-				if (particle == null) {
-					fail("Cannot find particle type");
-				} else {
-					for (int i = 0; i < count; i++) {
-						pos.getWorld().spawnParticle(particle, false, pos.xCoord, pos.yCoord, pos.zCoord, dx, dy, dz, extras);
-					}
-				}
-			}
-		}
-
-		protected static void unknownCommand() {
-			fail("unknown command");
 		}
 
 		public static void init() {
@@ -1255,6 +947,312 @@ public class APIRegistry {
 						}
 					});
 		}
+
+		protected static float normalizeAngle(float angle) {
+			angle = angle % 360;
+			if (angle <= -180) {
+				angle += 360;
+			}
+			if (angle > 180) {
+				angle -= 360;
+			}
+			return angle;
+		}
+
+		public static void onClick(PlayerInteractEvent event) {
+			if ((event.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK)
+					|| (detectLeftClick && (event.action == PlayerInteractEvent.Action.LEFT_CLICK_BLOCK))) {
+				if (!restrictToSword || holdingSword(event.entityPlayer)) {
+					synchronized (hits) {
+						if (hits.size() >= MAX_HITS) {
+							hits.remove(0);
+						}
+						hits.add(new HitDescription(eventHandler.getWorlds(), event));
+					}
+				}
+			}
+			if (eventHandler.stopChanges) {
+				event.setCanceled(true);
+			}
+		}
+
+		static boolean refresh() {
+			if (!useClientMethods) {
+				serverWorlds = MinecraftServer.getServer().worldServers;
+
+				if (serverWorlds == null) {
+					fail("Worlds not available");
+					return false;
+				}
+
+				if (!havePlayer) {
+					if (RaspberryJamMod.integrated) {
+						mc = Minecraft.getMinecraft();
+
+						if (mc == null) {
+							fail("Minecraft client not yet available");
+						}
+
+						if (mc.thePlayer == null) {
+							fail("Client player not available");
+							return false;
+						}
+						playerId = mc.thePlayer.getEntityId();
+						for (World w : serverWorlds) {
+							Entity e = w.getEntityByID(playerId);
+							if (e != null) {
+								playerMP = (EntityPlayerMP) e;
+							}
+						}
+					} else {
+						playerMP = null;
+						int firstId = 0;
+
+						for (World w : serverWorlds) {
+							for (EntityPlayer p : w.playerEntities) {
+								int id = p.getEntityId();
+								if ((playerMP == null) || (id < firstId)) {
+									firstId = id;
+									playerMP = (EntityPlayerMP) p;
+								}
+							}
+						}
+					}
+					if (playerMP == null) {
+						fail("Player not found");
+						return false;
+					}
+					havePlayer = true;
+				}
+				return true;
+			} else {
+				if (!RaspberryJamMod.integrated) {
+					fail("This requires the client");
+					return false;
+				}
+
+				mc = Minecraft.getMinecraft();
+				if (mc == null) {
+					fail("Minecraft client not yet available");
+					return false;
+				}
+
+				serverWorlds = new World[] { mc.theWorld };
+
+				if (mc.thePlayer == null) {
+					fail("Client player not available");
+					return false;
+				}
+
+				playerId = mc.thePlayer.getEntityId();
+				playerMP = null;
+				havePlayer = true;
+				return true;
+			}
+		}
+
+		protected static void removeEntity(int id) {
+			Entity e = getServerEntityByID(id);
+			if (e != null) {
+				e.getEntityWorld().removeEntity(e);
+			}
+		}
+
+		protected static void sendLine(BlockPos pos) {
+			sendLine("" + pos.getX() + "," + pos.getY() + "," + pos.getZ());
+		}
+
+		protected static void sendLine(double x) {
+			sendLine(Double.toString(x));
+		}
+
+		protected static void sendLine(int x) {
+			sendLine(Integer.toString(x));
+		}
+
+		static void sendLine(String string) {
+			try {
+				getWriter().print(string + "\n");
+				getWriter().flush();
+			} catch (Exception e) {
+			}
+		}
+
+		protected static void sendLine(Vec3 v) {
+			sendLine("" + v.xCoord + "," + v.yCoord + "," + v.zCoord);
+		}
+
+		public static void setUseClientMethods(boolean state) {
+			useClientMethods = state;
+		}
+
+		public static void setWriter(PrintWriter p_writer) {
+			writer = p_writer;
+		}
+
+		protected static void spawnEntity(Scanner scan) {
+			String entityId = scan.next();
+			double x0 = scan.nextDouble();
+			double y0 = scan.nextDouble();
+			double z0 = scan.nextDouble();
+			Vec3w pos = Location.decodeVec3w(serverWorlds, x0, y0, z0);
+			String tagString = getRest(scan);
+			Entity entity;
+			if (tagString.length() > 0) {
+				NBTTagCompound tags;
+				try {
+					tags = JsonToNBT.getTagFromJson(tagString);
+				} catch (NBTException e) {
+					fail("Cannot parse tags");
+					return;
+				}
+				tags.setString("id", entityId);
+				entity = EntityList.createEntityFromNBT(tags, pos.getWorld());
+			} else {
+				entity = EntityList.createEntityByName(entityId, pos.getWorld());
+			}
+
+			if (entity == null) {
+				fail("Cannot create entity");
+			} else {
+				entity.setPositionAndUpdate(pos.xCoord, pos.yCoord, pos.zCoord);
+				pos.getWorld().spawnEntityInWorld(entity);
+				sendLine(entity.getEntityId());
+			}
+		}
+
+		protected static void spawnParticle(Scanner scan) {
+			if (!useClientMethods) {
+				String particleName = scan.next();
+				double x0 = scan.nextDouble();
+				double y0 = scan.nextDouble();
+				double z0 = scan.nextDouble();
+				Vec3w pos = Location.decodeVec3w(serverWorlds, x0, y0, z0);
+				double dx = scan.nextDouble();
+				double dy = scan.nextDouble();
+				double dz = scan.nextDouble();
+				double speed = scan.nextDouble();
+				int count = scan.nextInt();
+
+				int[] extras = null;
+				EnumParticleTypes particle = null;
+				for (EnumParticleTypes e : EnumParticleTypes.values()) {
+					if (e.getParticleName().equals(particleName)) {
+						particle = e;
+						extras = new int[e.getArgumentCount()];
+						try {
+							for (int i = 0; i < extras.length; i++) {
+								extras[i] = scan.nextInt();
+							}
+						} catch (Exception exc) {
+						}
+						break;
+					}
+				}
+				if (particle == null) {
+					fail("Cannot find particle type");
+				} else {
+					((WorldServer) pos.getWorld()).spawnParticle(particle, false, pos.xCoord, pos.yCoord, pos.zCoord,
+							count, dx, dy, dz, speed, extras);
+				}
+			} else {
+				String particleName = scan.next();
+				double x0 = scan.nextDouble();
+				double y0 = scan.nextDouble();
+				double z0 = scan.nextDouble();
+				Vec3w pos = Location.decodeVec3w(serverWorlds, x0, y0, z0);
+				double dx = scan.nextDouble();
+				double dy = scan.nextDouble();
+				double dz = scan.nextDouble();
+				scan.nextDouble();
+				int count = scan.nextInt();
+
+				int[] extras = null;
+				EnumParticleTypes particle = null;
+				for (EnumParticleTypes e : EnumParticleTypes.values()) {
+					if (e.getParticleName().equals(particleName)) {
+						particle = e;
+						extras = new int[e.getArgumentCount()];
+						try {
+							for (int i = 0; i < extras.length; i++) {
+								extras[i] = scan.nextInt();
+							}
+						} catch (Exception exc) {
+						}
+						break;
+					}
+				}
+				if (particle == null) {
+					fail("Cannot find particle type");
+				} else {
+					for (int i = 0; i < count; i++) {
+						pos.getWorld().spawnParticle(particle, false, pos.xCoord, pos.yCoord, pos.zCoord, dx, dy, dz,
+								extras);
+					}
+				}
+			}
+		}
+
+		public static int trunc(double x) {
+			return (int) Math.floor(x);
+		}
+
+		protected static void unknownCommand() {
+			fail("unknown command");
+		}
+
+		public void clearChats() {
+			synchronized (chats) {
+				chats.clear();
+			}
+		}
+
+		public void clearHits() {
+			synchronized (hits) {
+				hits.clear();
+			}
+		}
+
+		public int eventCount() {
+			synchronized (hits) {
+				return hits.size();
+			}
+		}
+	}
+
+	public static boolean initd = false;
+
+	public static Map<String, CommandRunnable> commands = Maps.newHashMap();
+
+	public static CommandRunnable getExectuableCode(String name) {
+		return commands.get(name);
+	}
+
+	public static void init() {
+		Python2MinecraftApi.init();
+	}
+
+	public static void registerCommand(String name, CommandRunnable executableCode) {
+		try {
+			commands.put(name, executableCode);
+			RaspberryJamMod.logger.error("Registering Command: " + name);
+		} catch (Exception e) {
+			RaspberryJamMod.logger.error("Command already registered");
+		}
+	}
+
+	public static boolean runCommand(String name, String args, Scanner scan, MCEventHandler eventHandler) {
+		try {
+			RaspberryJamMod.logger.error("Executing Command: " + name);
+			commands.get(name).execute(args, scan, eventHandler);
+		} catch (Exception e) {
+			return false;
+		}
+		return true;
+	}
+
+	public static void setExectuableCode(String name, CommandRunnable code) {
+		commands.replace(name, code);
 	}
 
 }

@@ -104,12 +104,7 @@ public class APIServer {
 					}
 					if (numSockets < MAX_CONNECTIONS) {
 						final Socket socket = serverSocket.accept();
-						new Thread(new Runnable() {
-							@Override
-							public void run() {
-								socketCommunicate(socket);
-							}
-						}).start();
+						new Thread(() -> socketCommunicate(socket)).start();
 					} else {
 						// Too many connections: sleep hoping one or more go
 						// away

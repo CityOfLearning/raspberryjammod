@@ -120,16 +120,13 @@ public class ClientEventHandler {
 							true);
 					RaspberryJamMod.currentPortNumber = apiServer.getPortNumber();
 
-					new Thread(new Runnable() {
-						@Override
-						public void run() {
-							try {
-								apiServer.communicate();
-							} catch (IOException e) {
-								RaspberryJamMod.logger.error("RaspberryJamMod error " + e);
-							} finally {
-								closeAPI();
-							}
+					new Thread(() -> {
+						try {
+							apiServer.communicate();
+						} catch (IOException e) {
+							RaspberryJamMod.logger.error("RaspberryJamMod error " + e);
+						} finally {
+							closeAPI();
 						}
 					}).start();
 				}
