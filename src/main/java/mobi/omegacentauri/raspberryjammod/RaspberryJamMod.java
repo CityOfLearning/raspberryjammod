@@ -8,6 +8,9 @@ import java.util.Set;
 
 import org.apache.logging.log4j.Logger;
 
+import com.google.common.collect.Maps;
+
+import mobi.omegacentauri.raspberryjammod.api.APIRegistry;
 import mobi.omegacentauri.raspberryjammod.api.APIServer;
 import mobi.omegacentauri.raspberryjammod.command.AddPythonExternalCommand;
 import mobi.omegacentauri.raspberryjammod.command.CameraCommand;
@@ -22,6 +25,7 @@ import mobi.omegacentauri.raspberryjammod.util.FileUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.command.CommandHandler;
 import net.minecraft.command.ICommand;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
@@ -42,9 +46,9 @@ public class RaspberryJamMod {
 	public static final String VERSION = "0.82";
 	public static final String NAME = "Raspberry Jam Mod";
 	public static ScriptExternalCommand[] scriptExternalCommands = null;
+	
+	//config options
 	public static Configuration configFile;
-	public static int portNumber = 4711;
-	public static int wsPort = 14711;
 	public static boolean concurrent = true;
 	public static boolean leftClickToo = true;
 	public static boolean useSystemPath = true;
@@ -55,12 +59,20 @@ public class RaspberryJamMod {
 	public static boolean integrated = true;
 	public static volatile boolean apiActive = false;
 	public static boolean clientOnlyAPI = false;
+	
+	//websocket stuff
+	public static int portNumber = 4711;
+	public static int wsPort = 14711;
 	public static boolean searchForPort = false;
 	public static int currentPortNumber;
 	public static String serverAddress = null;
+	
+	//player scripts so admins/mentors can destroy running scripts
+	public static Map<EntityPlayer, Process> playerProcesses = Maps.newHashMap();
 
 	public static Logger logger;
 
+	//our new event bus for code related events
 	public static final EventBus EVENT_BUS = new EventBus();
 
 	public static int closeAllScripts() {
@@ -148,6 +160,7 @@ public class RaspberryJamMod {
 	}
 
 	private APIServer fullAPIServer = null;
+	
 	private NightVisionExternalCommand nightVisionExternalCommand = null;
 
 	private CameraCommand cameraCommand = null;
@@ -224,7 +237,7 @@ public class RaspberryJamMod {
 				if (!path.exists()) {
 					path.mkdirs();
 					File zip = new File(path, "python.zip");
-					FileUtils.downloadFileWithProgress(
+					FileUtils.downloadFile(
 							"https://www.python.org/ftp/python/3.5.2/python-3.5.2-embed-amd64.zip", zip);
 					FileUtils.unZip(zip.getAbsolutePath(), path.getAbsolutePath());
 					zip.delete();
@@ -235,7 +248,7 @@ public class RaspberryJamMod {
 				if (!path.exists()) {
 					path.mkdirs();
 					File zip = new File(path, "python.zip");
-					FileUtils.downloadFileWithProgress(
+					FileUtils.downloadFile(
 							"https://www.python.org/ftp/python/3.5.2/python-3.5.2-embed-amd64.zip", zip);
 					FileUtils.unZip(zip.getAbsolutePath(), path.getAbsolutePath());
 					zip.delete();
@@ -283,6 +296,8 @@ public class RaspberryJamMod {
 		RaspberryJamMod.logger = event.getModLog();
 
 		NetworkHandler.init();
+		
+		APIRegistry.init();
 
 		integrated = true;
 		try {
