@@ -1,6 +1,7 @@
 package mobi.omegacentauri.raspberryjammod.events;
 
 import mobi.omegacentauri.raspberryjammod.api.APIHandler;
+import mobi.omegacentauri.raspberryjammod.api.APIRegistry;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
 import net.minecraftforge.event.ServerChatEvent;
@@ -20,7 +21,7 @@ public class MCEventHandlerServer extends MCEventHandler {
 
 	@SubscribeEvent
 	public void onChatEvent(ServerChatEvent event) {
-		APIHandler.ChatDescription cd = new APIHandler.ChatDescription(event.player.getEntityId(), event.message);
+		APIRegistry.Python2MinecraftApi.ChatDescription cd = new APIRegistry.Python2MinecraftApi.ChatDescription(event.player.getEntityId(), event.message);
 
 		for (APIHandler apiHandler : apiHandlers) {
 			apiHandler.addChatDescription(cd);
