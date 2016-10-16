@@ -56,7 +56,7 @@ public class FileUtils {
 		}
 	}
 
-	public static void downloadFileWithProgress(String url, File dest) {
+	public static void downloadFile(String url, File dest) {
 		try {
 			String md5 = null;
 			if (dest.exists()) {
