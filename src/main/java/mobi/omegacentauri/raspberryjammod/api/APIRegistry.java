@@ -165,8 +165,6 @@ public class APIRegistry {
 
 		protected static World[] serverWorlds;
 
-		protected static MCEventHandler eventHandler;
-
 		protected static boolean listening = true;
 
 		protected static Minecraft mc;
@@ -206,36 +204,6 @@ public class APIRegistry {
 
 		public static boolean doesUseClientMethods() {
 			return useClientMethods;
-		}
-
-		protected static void entityCommand(int id, String cmd, Scanner scan) {
-			if (cmd.equals(GETPOS)) {
-				entityGetPos(id);
-			} else if (cmd.equals(GETTILE)) {
-				entityGetTile(id);
-			} else if (cmd.equals(GETROTATION)) {
-				entityGetRotation(id);
-			} else if (cmd.equals(SETROTATION)) {
-				entitySetRotation(id, scan.nextFloat());
-			} else if (cmd.equals(GETPITCH)) {
-				entityGetPitch(id);
-			} else if (cmd.equals(SETPITCH)) {
-				entitySetPitch(id, scan.nextFloat());
-			} else if (cmd.equals(GETDIRECTION)) {
-				entityGetDirection(id);
-			} else if (cmd.equals(SETDIRECTION)) {
-				entitySetDirection(id, scan);
-			} else if (cmd.equals(SETTILE)) {
-				entitySetTile(id, scan);
-			} else if (cmd.equals(SETPOS)) {
-				entitySetPos(id, scan);
-			} else if (cmd.equals(SETDIMENSION)) {
-				entitySetDimension(id, scan.nextInt());
-			} else if (cmd.equals(GETNAME)) {
-				entityGetNameAndUUID(id);
-			} else {
-				unknownCommand();
-			}
 		}
 
 		protected static void entityGetDirection(int id) {
@@ -325,7 +293,7 @@ public class APIRegistry {
 			}
 		}
 
-		protected static void entitySetDimension(int id, int dimension) {
+		protected static void entitySetDimension(int id, int dimension, MCEventHandler eventHandler) {
 			Entity e = getServerEntityByID(id);
 			if (e != null) {
 				eventHandler.queueServerAction(new SetDimension(e, dimension));
@@ -817,7 +785,7 @@ public class APIRegistry {
 					});
 			APIRegistry.registerCommand("player." + SETDIMENSION,
 					(String args, Scanner scan, MCEventHandler eventHandler) -> {
-						entitySetDimension(playerId, scan.nextInt());
+						entitySetDimension(playerId, scan.nextInt(), eventHandler);
 					});
 			APIRegistry.registerCommand("player." + GETNAME,
 					(String args, Scanner scan, MCEventHandler eventHandler) -> {
@@ -867,7 +835,7 @@ public class APIRegistry {
 					});
 			APIRegistry.registerCommand("entity." + SETDIMENSION,
 					(String args, Scanner scan, MCEventHandler eventHandler) -> {
-						entitySetDimension(scan.nextInt(), scan.nextInt());
+						entitySetDimension(scan.nextInt(), scan.nextInt(), eventHandler);
 					});
 			APIRegistry.registerCommand("entity." + GETNAME,
 					(String args, Scanner scan, MCEventHandler eventHandler) -> {
@@ -959,7 +927,7 @@ public class APIRegistry {
 			return angle;
 		}
 
-		public static void onClick(PlayerInteractEvent event) {
+		public static void onClick(PlayerInteractEvent event, MCEventHandler eventHandler) {
 			if ((event.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK)
 					|| (detectLeftClick && (event.action == PlayerInteractEvent.Action.LEFT_CLICK_BLOCK))) {
 				if (!restrictToSword || holdingSword(event.entityPlayer)) {
@@ -1070,7 +1038,7 @@ public class APIRegistry {
 			sendLine(Integer.toString(x));
 		}
 
-		static void sendLine(String string) {
+		protected static void sendLine(String string) {
 			try {
 				getWriter().print(string + "\n");
 				getWriter().flush();
@@ -1243,9 +1211,9 @@ public class APIRegistry {
 
 	public static boolean runCommand(String name, String args, Scanner scan, MCEventHandler eventHandler) {
 		try {
-			RaspberryJamMod.logger.error("Executing Command: " + name);
 			commands.get(name).execute(args, scan, eventHandler);
 		} catch (Exception e) {
+			RaspberryJamMod.logger.error("Failed Executing Command: " + name);
 			return false;
 		}
 		return true;

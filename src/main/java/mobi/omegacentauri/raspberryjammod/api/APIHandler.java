@@ -63,7 +63,7 @@ public class APIHandler {
 	}
 
 	public void onClick(PlayerInteractEvent event) {
-		APIRegistry.Python2MinecraftApi.onClick(event);
+		APIRegistry.Python2MinecraftApi.onClick(event, eventHandler);
 	}
 
 	public void process(String clientSentence) {
@@ -81,7 +81,7 @@ public class APIHandler {
 
 			String cmd = clientSentence.substring(0, paren);
 			String args = clientSentence.substring(paren + 1).replaceAll("[\\s\r\n]+$", "").replaceAll("\\)$", "");
-
+			
 			if (cmd.startsWith("player.")) {
 				// Compatibility with the mcpi library included with Juice
 				if (args.startsWith("None,")) {
