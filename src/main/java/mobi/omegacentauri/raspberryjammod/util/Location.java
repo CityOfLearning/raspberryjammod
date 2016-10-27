@@ -90,6 +90,11 @@ public class Location extends BlockPos {
 		super(x, y, z);
 		setWorld(world);
 	}
+	
+	public Location(World world, BlockPos pos) {
+		super(pos);
+		setWorld(world);
+	}
 
 	Location(World world, int x, int y, int z) {
 		super(x, y, z);
