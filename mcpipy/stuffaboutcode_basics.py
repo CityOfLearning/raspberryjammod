@@ -12,8 +12,6 @@ import mcpi.minecraft as minecraft
 import mcpi.block as block
 #import time, so delays can be used
 import time
-import server
-
 
 if __name__ == "__main__":
     
@@ -21,7 +19,7 @@ if __name__ == "__main__":
 
     #Connect to minecraft by creating the minecraft object
     # - minecraft needs to be running and in a game
-    mc = minecraft.Minecraft.create(server.address)
+    mc = minecraft.Minecraft()
 
     #Post a message to the minecraft chat window
     mc.postToChat("Hi, Minecraft API, the basics, what can you do? ")

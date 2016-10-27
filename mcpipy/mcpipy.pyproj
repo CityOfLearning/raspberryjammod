@@ -5,7 +5,8 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{ad0b690c-a698-4ce0-9b50-3069e7e8660d}</ProjectGuid>
     <ProjectHome />
-    <StartupFile>klein2.py</StartupFile>
+    <StartupFile>
+    </StartupFile>
     <SearchPath />
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
@@ -23,49 +24,60 @@
     <PtvsTargetsFile>$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets</PtvsTargetsFile>
   </PropertyGroup>
   <ItemGroup>
-    <None Include="borromean.py" />
-    <None Include="donut.py" />
-    <None Include="dragoncurve.py" />
     <None Include="drawing.py" />
-    <None Include="glasscube.py" />
     <None Include="hilbert.py" />
-    <None Include="klein.py" />
-    <None Include="klein2.py" />
-    <None Include="knot.py" />
-    <None Include="knot2.py" />
-    <None Include="lforest.py" />
-    <None Include="lsystem.py" />
+    <None Include="api\lsystem.py" />
     <None Include="ltree.py" />
-    <None Include="mandelbrot.py" />
-    <None Include="mc.py" />
-    <None Include="mcdragoncurve.py" />
-    <None Include="mcpi\block.py" />
-    <None Include="mcpi\connection.py" />
-    <None Include="mcpi\entity.py" />
-    <None Include="mcpi\event.py" />
-    <None Include="mcpi\minecraft.py" />
-    <None Include="mcpi\util.py" />
-    <None Include="mcpi\vec3.py" />
-    <None Include="mcpi\__init__.py" />
-    <None Include="mcturtle.py" />
-    <None Include="mengersponge.py" />
-    <None Include="sphere.py" />
-    <None Include="polyhedron.py" />
     <None Include="scan.py" />
-    <None Include="server.py" />
-    <None Include="sierpinski3d.py" />
-    <None Include="simpletree.py" />
-    <None Include="snowflake.py" />
-    <None Include="spacefill.py" />
-    <None Include="squarecurve.py" />
-    <None Include="star.py" />
-    <None Include="symmetry.py" />
-    <None Include="turtle.py" />
-    <None Include="turtledonut.py" />
-    <None Include="vehicle.py" />
+    <None Include="client\vehicle.py" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="mcpi\" />
+    <Folder Include="api\" />
+    <Folder Include="client\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="benchmark.py" />
+    <Compile Include="blocks_to_bombs.py" />
+    <Compile Include="castle.py" />
+    <Compile Include="chess.py" />
+    <Compile Include="colors.py" />
+    <Compile Include="console.py" />
+    <Compile Include="danielbates_setblockdemo.py" />
+    <Compile Include="maze.py" />
+    <Compile Include="explosify.py" />
+    <Compile Include="api\fonts.py" />
+    <Compile Include="gf_drawbuilding.py" />
+    <Compile Include="goldcollector.py" />
+    <Compile Include="hanoi.py" />
+    <Compile Include="helloworld.py" />
+    <Compile Include="client\import.py" />
+    <Compile Include="interpreter.py" />
+    <Compile Include="life.py" />
+    <Compile Include="mcpi\block.py" />
+    <Compile Include="mcpi\connection.py" />
+    <Compile Include="mcpi\entity.py" />
+    <Compile Include="mcpi\event.py" />
+    <Compile Include="mcpi\minecraft.py" />
+    <Compile Include="mcpi\nbt.py" />
+    <Compile Include="mcpi\security-template.py" />
+    <Compile Include="mcpi\settings.py" />
+    <Compile Include="mcpi\util.py" />
+    <Compile Include="mcpi\vec3.py" />
+    <Compile Include="mcpi\vpython_minecraft.py" />
+    <Compile Include="mcpi\__init__.py" />
+    <Compile Include="mine.py" />
+    <Compile Include="api\turtle.py" />
+    <Compile Include="api\render.py" />
+    <Compile Include="api\robot.py" />
+    <Compile Include="stuffaboutcode_basics.py" />
+    <Compile Include="stuffaboutcode_bridge.py" />
+    <Compile Include="stuffaboutcode_clock.py" />
+    <Compile Include="stuffaboutcode_hideandseek.py" />
+    <Compile Include="stuffaboutcode_snake.py" />
+    <Compile Include="api\text.py" />
+    <Compile Include="client\toschematic.py" />
+    <Compile Include="turtleconsole.py" />
   </ItemGroup>
   <Import Project="$(PtvsTargetsFile)" Condition="Exists($(PtvsTargetsFile))" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" Condition="!Exists($(PtvsTargetsFile))" />

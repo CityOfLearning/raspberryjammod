@@ -8,7 +8,6 @@ from __future__ import print_function
 from mine import *
 #import pygame.image # comment this out if not using images - it's slow to import.  If you uncomment, uncomment the image reference below.
 import random
-import server
 
 # TODO: use numpy matrices/vectors instead of my own ones.
 class coordinate3d:

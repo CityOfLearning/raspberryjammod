@@ -2,7 +2,7 @@
 # Code by Alexander Pruss and under the MIT license
 #
 import lsystem
-from mineturtle import *
+from api.turtle import *
 from sys import argv
 
 t = Turtle()
