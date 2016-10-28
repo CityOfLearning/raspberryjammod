@@ -295,7 +295,7 @@ public class APIRegistry {
 
 		protected static void entitySetDimension(int id, int dimension, MCEventHandler eventHandler) {
 			Entity e = getServerEntityByID(id);
-			if (e != null) {
+			if (e != null) { 
 				eventHandler.queueServerAction(new SetDimension(e, dimension));
 			}
 		}
@@ -1210,11 +1210,14 @@ public class APIRegistry {
 	}
 
 	public static boolean runCommand(String name, String args, Scanner scan, MCEventHandler eventHandler) {
+		if(!commands.containsKey(name)){
+			return false;
+		}
 		try {
+			RaspberryJamMod.logger.info("Running Cmd: " + name + ", " + args);
 			commands.get(name).execute(args, scan, eventHandler);
 		} catch (Exception e) {
 			RaspberryJamMod.logger.error("Failed Executing Command: " + name);
-			return false;
 		}
 		return true;
 	}

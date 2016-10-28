@@ -95,7 +95,9 @@ public class APIHandler {
 			scan.useDelimiter(",");
 
 			synchronized (eventHandler) {
-				runCommand(cmd, args, scan);
+				if (!APIRegistry.runCommand(cmd, args, scan, eventHandler)) {
+					unknownCommand(cmd);
+				}
 			}
 
 			scan.close();
@@ -110,16 +112,8 @@ public class APIHandler {
 		}
 	}
 
-	protected void runCommand(String cmd, String args, Scanner scan)
-			throws InputMismatchException, NoSuchElementException, IndexOutOfBoundsException {
-
-		if (!APIRegistry.runCommand(cmd, args, scan, eventHandler)) {
-			unknownCommand();
-		}
-	}
-
-	protected void unknownCommand() {
-		fail("unknown command");
+	protected void unknownCommand(String command) {
+		fail("Unknown Command: " + command);
 	}
 
 }
