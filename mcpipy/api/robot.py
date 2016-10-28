@@ -3,15 +3,7 @@
 #
 
 import mcpi.minecraft as minecraft
-import mcpi.block as block
-from mcpi.entity import *
-import numbers
-import copy
 import time
-from drawing import *
-from operator import itemgetter
-from math import *
-import numbers
 
 Block = block.Block
 
@@ -23,42 +15,22 @@ class Robot:
         else:
              self.mc = minecraft.Minecraft()
         self.block = block.DIRT
-        self.directionIn()
-        self.positionIn()
         self.robotId = minecraft.conn.send("robot.id")
-        self.setEntityCommands()
         self.delayTime = 0.05
-
-    def setEntityCommands(self):
-            self.setPos = lambda *pos: self.mc.conn.send("robot.setPos",self.robotId,*pos)
-            self.setRotation = lambda angle: self.mc.conn.send("robot.setRotation", self.robotId,angle)
 
     def robot(self):
         """Initialize the Robot"""
         self.robotId = minecraft.conn.send("robot.id")
-        self.setEntityCommands()
-        self.gridalign()
-        self.positionOut()
-        self.directionOut()
 
-    def goto(self,x,y,z):
-        """Teleport robot to location (x:int, y:int, z:int)"""
-        self.position.x = x
-        self.position.y = y
-        self.position.z = z
-        self.positionOut()
-        self.delay()
-
-    def inspect(self):
+    def inspect(self, *args):
         """Get block with data (x,y,z) => Block"""
         ans = self.conn.sendReceive_flat("robot.inspect", floorFlatten(args))
         return Block(*[int(x) for x in ans.split(",")[:2]])
 
     def angle(self,angle):
         """Compass angle of robot (angle:float/int) in degrees: 0=south, 90=west, 180=north, 270=west"""
-        angles = self.getMinecraftAngles()
-        self.matrix = matrixMultiply(yawMatrix(angle), pitchMatrix(angles[1]))
-        self.directionOut()
+        self.conn.sendReceive_flat("robot.turn", floorFlatten(angle))
+		self.delay()
 
     def positionIn(self):
         pos = minecraft.conn.send("robot.getPos")
@@ -70,13 +42,6 @@ class Robot:
     def delay(self):
         if self.delayTime > 0:
             time.sleep(self.delayTime)
-
-    def directionIn(self):
-        rotation = minecraft.conn.send("robot.getRotation")
-        self.matrix = matrixMultiply(yawMatrix(rotation), pitchMatrix(0))
-
-    def getHeading(self):
-        return [self.matrix[0][2],self.matrix[1][2],self.matrix[2][2]]
 
     def getMinecraftAngles(self):
         heading = self.getHeading()
@@ -113,31 +78,14 @@ class Robot:
 
     def left(self, angle=-90):
         """Turn counterclockwise relative to compass heading"""
-        self.right(-angle)
+        
 
     def right(self, angle=90):
         """Turn clockwise relative to compass heading"""
-        self.matrix = matrixMultiply(yawMatrix(angle), self.matrix)
-        self.directionOut()
-        self.delay()
+		
 
     def forward(self, distance=1):
         """Move robot forward (distance: float)"""
-#        pitch = self.pitch * pi/180.
-#        rot = self.rotation * pi/180.
-        # at pitch=0: rot=0 -> [0,0,1], rot=90 -> [-1,0,0]
-#        dx = cos(-pitch) * sin(-rot)
-#        dy = sin(-pitch)
-#        dz = cos(-pitch) * cos(-rot)
-        [dx,dy,dz] = self.getHeading()
-        newX = self.position.x + dx * distance
-        newY = self.position.y + dy * distance
-        newZ = self.position.z + dz * distance
-        self.position.x = newX
-        self.position.y = newY
-        self.position.z = newZ
-        self.positionOut()
-        self.delay()
 
     def placeBlock(self, *args):
         """Set block (id,[data]), can be empty so robot uses inventory"""
@@ -149,39 +97,14 @@ class Robot:
 
     def back(self, distance=1):
         """Move robot backwards and keeping heading unchanged"""
-#        pitch = self.pitch * pi/180.
-#        rot = self.rotation * pi/180.
-#        dx = - cos(-pitch) * sin(-rot)
-#        dy = - sin(-pitch)
-#        dz = - cos(-pitch) * cos(-rot)
-        [dx,dy,dz] = self.getHeading()
-        newX = self.position.x - dx * distance
-        newY = self.position.y - dy * distance
-        newZ = self.position.z - dz * distance
-        self.position.x = newX
-        self.position.y = newY
-        self.position.z = newZ
-        self.positionOut()
-        self.delay()
+		
+        
+	def getDirection(self):
+        """Get entity direction (entityId:int) => Vec3"""
+        s = self.conn.sendReceive("robot.getDirection", self.robotId)
+        return Vec3((float(x) for x in s.split(",")))
 
-    def gridalign(self):
-        """Align positions to grid"""
-        self.position.x = int(round(self.position.x))
-        self.position.y = int(round(self.position.y))
-        self.position.z = int(round(self.position.z))
-
-        bestDist = 2 * 9
-        bestMatrix = makeMatrix(0,0,0)
-
-        for compass in [0, 90, 180, 270]:
-            for pitch in [0, 90, 180, 270]:
-                for roll in [0, 90, 180, 270]:
-                    m = makeMatrix(compass,pitch,roll)
-                    dist = matrixDistanceSquared(self.matrix, m)
-                    if dist < bestDist:
-                        bestMatrix = m
-                        bestDist = dist
-
-        self.matrix = bestMatrix
-        self.positionOut()
-        self.directionOut()
+    def getPos(self):
+        """Get entity position (entityId:int) => Vec3"""
+        s = self.conn.sendReceive("robot.getPos", self.robotId)
+        return Vec3((float(x) for x in s.split(",")))
