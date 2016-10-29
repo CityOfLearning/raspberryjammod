@@ -59,7 +59,7 @@ class Connection:
         try:
             if self.windows:
                 # ugly hack to block until all sending is completed
-                self.sendReceive("world.getBlock",0,0,0)
+                self.sendReceive("mcpi.close")
         except:
             pass
         try:
@@ -72,7 +72,8 @@ class Connection:
         return "".join((hex(b) for b in data))
             
     def authenticate(self, username, password):
-        challenge = self.sendReceive("world.getBlock",0,0,0)
+        challenge = self.sendReceive("mcpi.auth")
+        #challenge = self.sendReceive("world.getBlock",0,0,0)
         if challenge.startswith("security.challenge "):
             salt = challenge[19:].rstrip()
             if sys.version_info[0] >= 3:

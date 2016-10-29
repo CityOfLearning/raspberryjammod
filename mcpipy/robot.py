@@ -14,7 +14,7 @@ class Robot:
 
     def __init__(self):
         self.mc = minecraft.Minecraft()
-        self.robotId = 0
+        self.robotId = self.mc.conn.sendReceive("robot.id")
         self.delayTime = 0.05
 
     def robot(self):
@@ -62,8 +62,12 @@ class Robot:
             self.mc.conn.send("robot.break", self.robotId)
 
     def backward(self, distance=1):
-        """Move robot backwards and keeping heading unchanged"""
+        """Move robot backwards, will change heading"""
         self.mc.conn.send("robot.backward", self.robotId, distance)
+        
+    def jump(self):
+        """Make robot jump"""
+        self.mc.conn.send("robot.jump", self.robotId)
         
     def getDirection(self):
         """Get entity direction (entityId:int) => Vec3"""
