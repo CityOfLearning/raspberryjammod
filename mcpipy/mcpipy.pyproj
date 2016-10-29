@@ -69,12 +69,8 @@
     <Compile Include="mine.py" />
     <Compile Include="api\turtle.py" />
     <Compile Include="api\render.py" />
-    <Compile Include="api\robot.py" />
     <Compile Include="stuffaboutcode_basics.py" />
-    <Compile Include="stuffaboutcode_bridge.py" />
-    <Compile Include="stuffaboutcode_clock.py" />
     <Compile Include="stuffaboutcode_hideandseek.py" />
-    <Compile Include="stuffaboutcode_snake.py" />
     <Compile Include="api\text.py" />
     <Compile Include="client\toschematic.py" />
     <Compile Include="turtleconsole.py" />

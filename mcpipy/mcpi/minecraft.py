@@ -154,8 +154,6 @@ class CmdPlayer(CmdPositioner):
         return CmdPositioner.setRotation(self, self.id, args)
     def setDirection(self, *args):
         return CmdPositioner.setDirection(self, self.id, args)
-    def getRotation(self):
-        return CmdPositioner.getRotation(self, self.id)
     def getPos(self):
         return CmdPositioner.getPos(self, self.id)
     def setPos(self, *args):

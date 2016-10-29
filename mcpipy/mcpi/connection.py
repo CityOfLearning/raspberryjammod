@@ -13,7 +13,13 @@ from .util import flatten_parameters_to_string
 """ @author: Aron Nieminen, Mojang AB"""
 
 class RequestError(Exception):
-    pass
+    def __init__(self, message, *errors):
+
+        # Call the base class constructor with the parameters it needs
+        super(RequestError, self).__init__(message)
+
+        # Now for your custom code...
+        self.errors = errors
 
 class Connection:
     """Connection to a Minecraft Pi game"""
