@@ -17,6 +17,7 @@ import mobi.omegacentauri.raspberryjammod.actions.SetBlockState;
 import mobi.omegacentauri.raspberryjammod.actions.SetBlocksNBT;
 import mobi.omegacentauri.raspberryjammod.actions.SetBlocksState;
 import mobi.omegacentauri.raspberryjammod.events.MCEventHandler;
+import mobi.omegacentauri.raspberryjammod.network.CodeEvent;
 import mobi.omegacentauri.raspberryjammod.util.BlockState;
 import mobi.omegacentauri.raspberryjammod.util.Location;
 import mobi.omegacentauri.raspberryjammod.util.SetDimension;
@@ -105,6 +106,9 @@ public class APIRegistry {
 		// it
 		// moves the
 		// player along with the entity that was set as camera
+		protected static final String AUTHENTICATE = "mcpi.auth";
+		protected static final String CLOSESOCKET = "mcpi.close";
+		
 		protected static final String CHAT = "chat.post";
 		protected static final String SETBLOCK = "world.setBlock";
 		protected static final String SETBLOCKS = "world.setBlocks";
@@ -528,6 +532,16 @@ public class APIRegistry {
 		}
 
 		public static void init() {
+			APIRegistry.registerCommand(AUTHENTICATE,
+					(String args, Scanner scan, MCEventHandler eventHandler) -> {
+						sendLine("handshake");
+					});
+			APIRegistry.registerCommand(CLOSESOCKET,
+					(String args, Scanner scan, MCEventHandler eventHandler) -> {
+						RaspberryJamMod.EVENT_BUS
+						.post(new CodeEvent.SocketCloseEvent(havePlayer ? playerMP : null));
+						sendLine("Closing Socket");
+					});
 			APIRegistry.registerCommand(SETBLOCK, (String args, Scanner scan, MCEventHandler eventHandler) -> {
 				Location pos = getBlockLocation(scan);
 				short id = scan.nextShort();
@@ -1217,7 +1231,7 @@ public class APIRegistry {
 			RaspberryJamMod.logger.info("Running Cmd: " + name + ", " + args);
 			commands.get(name).execute(args, scan, eventHandler);
 		} catch (Exception e) {
-			RaspberryJamMod.logger.error("Failed Executing Command: " + name);
+			RaspberryJamMod.logger.error("Failed Executing Command: " + name, e);
 		}
 		return true;
 	}

@@ -1,9 +1,21 @@
 package mobi.omegacentauri.raspberryjammod.network;
 
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
 public class CodeEvent extends Event {
 
+	public static class SocketCloseEvent extends CodeEvent {
+		private final EntityPlayer player;
+		public SocketCloseEvent(EntityPlayer player){
+			this.player = player;
+		}
+		
+		public EntityPlayer getPlayer(){
+			return player;
+		}
+	}
+	
 	public static class ErrorEvent extends CodeEvent {
 		private final String code;
 		private final String error;
