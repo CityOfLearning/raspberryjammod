@@ -9,6 +9,7 @@ import java.util.Scanner;
 import mobi.omegacentauri.raspberryjammod.RaspberryJamMod;
 import mobi.omegacentauri.raspberryjammod.api.APIRegistry.Python2MinecraftApi.ChatDescription;
 import mobi.omegacentauri.raspberryjammod.events.MCEventHandler;
+import mobi.omegacentauri.raspberryjammod.network.CodeEvent;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ChatComponentText;
@@ -64,6 +65,14 @@ public class APIHandler {
 
 	public void onClick(PlayerInteractEvent event) {
 		APIRegistry.Python2MinecraftApi.onClick(event, eventHandler);
+	}
+	
+	public void onSuccess(CodeEvent.SuccessEvent event) {
+		APIRegistry.Python2MinecraftApi.sendLine(event.getId() +"," + event.getCode());
+	}
+	
+	public void onFail(CodeEvent.FailEvent event) {
+		fail(String.format("Robot with id %d could not complete command: %s", event.getId(), event.getCode()));
 	}
 
 	public void process(String clientSentence) {

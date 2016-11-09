@@ -176,6 +176,7 @@ public class RaspberryJamMod {
 	public void Init(FMLInitializationEvent event) {
 		clientEventHandler = new ClientEventHandler();
 		MinecraftForge.EVENT_BUS.register(clientEventHandler);
+		RaspberryJamMod.EVENT_BUS.register(clientEventHandler);
 		nightVisionExternalCommand = new NightVisionExternalCommand(clientEventHandler);
 		net.minecraftforge.client.ClientCommandHandler.instance.registerCommand(nightVisionExternalCommand);
 		cameraCommand = new CameraCommand();
@@ -204,6 +205,7 @@ public class RaspberryJamMod {
 
 		serverEventHandler = new MCEventHandlerServer();
 		MinecraftForge.EVENT_BUS.register(serverEventHandler);
+		RaspberryJamMod.EVENT_BUS.register(serverEventHandler);
 		try {
 			currentPortNumber = -1;
 			fullAPIServer = new APIServer(serverEventHandler, portNumber, searchForPort ? 65535 : portNumber, wsPort,
@@ -267,6 +269,7 @@ public class RaspberryJamMod {
 
 		if (serverEventHandler != null) {
 			MinecraftForge.EVENT_BUS.unregister(serverEventHandler);
+			RaspberryJamMod.EVENT_BUS.unregister(serverEventHandler);
 			serverEventHandler = null;
 		}
 

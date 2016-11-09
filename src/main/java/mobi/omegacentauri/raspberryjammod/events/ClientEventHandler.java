@@ -41,7 +41,7 @@ public class ClientEventHandler {
 		RaspberryJamMod.apiActive = false;
 		if (apiEventHandler != null) {
 			MinecraftForge.EVENT_BUS.unregister(apiEventHandler);
-			FMLCommonHandler.instance().bus().unregister(apiEventHandler);
+			RaspberryJamMod.EVENT_BUS.unregister(apiEventHandler);
 			apiEventHandler = null;
 		}
 		if (apiServer != null) {
@@ -107,6 +107,7 @@ public class ClientEventHandler {
 		if (apiEventHandler == null) {
 			apiEventHandler = new MCEventHandlerClientOnly();
 			MinecraftForge.EVENT_BUS.register(apiEventHandler);
+			RaspberryJamMod.EVENT_BUS.register(apiEventHandler);
 		}
 
 		if (apiServer == null) {

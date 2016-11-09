@@ -7,6 +7,8 @@ import mobi.omegacentauri.raspberryjammod.RaspberryJamMod;
 import mobi.omegacentauri.raspberryjammod.actions.ServerAction;
 import mobi.omegacentauri.raspberryjammod.actions.SetBlockNBT;
 import mobi.omegacentauri.raspberryjammod.api.APIHandler;
+import mobi.omegacentauri.raspberryjammod.api.APIRegistry;
+import mobi.omegacentauri.raspberryjammod.network.CodeEvent;
 import mobi.omegacentauri.raspberryjammod.util.BlockState;
 import mobi.omegacentauri.raspberryjammod.util.Location;
 import net.minecraft.block.Block;
@@ -115,6 +117,20 @@ abstract public class MCEventHandler {
 
 		for (APIHandler apiHandler : apiHandlers) {
 			apiHandler.onClick(event);
+		}
+	}
+	
+	@SubscribeEvent
+	public void onSuccessEvent(CodeEvent.SuccessEvent event) {
+		for (APIHandler apiHandler : apiHandlers) {
+			apiHandler.onSuccess(event);
+		}
+	}
+	
+	@SubscribeEvent
+	public void onFailEvent(CodeEvent.FailEvent event) {
+		for (APIHandler apiHandler : apiHandlers) {
+			apiHandler.onFail(event);
 		}
 	}
 
