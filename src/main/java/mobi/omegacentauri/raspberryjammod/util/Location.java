@@ -86,13 +86,13 @@ public class Location extends BlockPos {
 
 	private World world;
 
-	public Location(World world, double x, double y, double z) {
-		super(x, y, z);
-		setWorld(world);
-	}
-	
 	public Location(World world, BlockPos pos) {
 		super(pos);
+		setWorld(world);
+	}
+
+	public Location(World world, double x, double y, double z) {
+		super(x, y, z);
 		setWorld(world);
 	}
 

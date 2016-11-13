@@ -2,8 +2,6 @@ package mobi.omegacentauri.raspberryjammod.api;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.InputMismatchException;
-import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 import mobi.omegacentauri.raspberryjammod.RaspberryJamMod;
@@ -66,13 +64,13 @@ public class APIHandler {
 	public void onClick(PlayerInteractEvent event) {
 		APIRegistry.Python2MinecraftApi.onClick(event, eventHandler);
 	}
-	
-	public void onSuccess(CodeEvent.SuccessEvent event) {
-		APIRegistry.Python2MinecraftApi.sendLine(event.getId() +"," + event.getCode());
-	}
-	
+
 	public void onFail(CodeEvent.FailEvent event) {
 		fail(String.format("Robot with id %d could not complete command: %s", event.getId(), event.getCode()));
+	}
+
+	public void onSuccess(CodeEvent.SuccessEvent event) {
+		APIRegistry.Python2MinecraftApi.sendLine(event.getId() + "," + event.getCode());
 	}
 
 	public void process(String clientSentence) {
@@ -90,7 +88,7 @@ public class APIHandler {
 
 			String cmd = clientSentence.substring(0, paren);
 			String args = clientSentence.substring(paren + 1).replaceAll("[\\s\r\n]+$", "").replaceAll("\\)$", "");
-			
+
 			if (cmd.startsWith("player.")) {
 				// Compatibility with the mcpi library included with Juice
 				if (args.startsWith("None,")) {

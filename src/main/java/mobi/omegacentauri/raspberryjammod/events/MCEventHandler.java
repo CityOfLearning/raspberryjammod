@@ -7,7 +7,6 @@ import mobi.omegacentauri.raspberryjammod.RaspberryJamMod;
 import mobi.omegacentauri.raspberryjammod.actions.ServerAction;
 import mobi.omegacentauri.raspberryjammod.actions.SetBlockNBT;
 import mobi.omegacentauri.raspberryjammod.api.APIHandler;
-import mobi.omegacentauri.raspberryjammod.api.APIRegistry;
 import mobi.omegacentauri.raspberryjammod.network.CodeEvent;
 import mobi.omegacentauri.raspberryjammod.util.BlockState;
 import mobi.omegacentauri.raspberryjammod.util.Location;
@@ -109,6 +108,13 @@ abstract public class MCEventHandler {
 	public abstract World[] getWorlds();
 
 	@SubscribeEvent
+	public void onFailEvent(CodeEvent.FailEvent event) {
+		for (APIHandler apiHandler : apiHandlers) {
+			apiHandler.onFail(event);
+		}
+	}
+
+	@SubscribeEvent
 	public void onPlayerInteractEvent(PlayerInteractEvent event) {
 		if ((event.entityPlayer == null)
 				|| (event.entityPlayer.getEntityWorld().isRemote != RaspberryJamMod.clientOnlyAPI)) {
@@ -119,18 +125,11 @@ abstract public class MCEventHandler {
 			apiHandler.onClick(event);
 		}
 	}
-	
+
 	@SubscribeEvent
 	public void onSuccessEvent(CodeEvent.SuccessEvent event) {
 		for (APIHandler apiHandler : apiHandlers) {
 			apiHandler.onSuccess(event);
-		}
-	}
-	
-	@SubscribeEvent
-	public void onFailEvent(CodeEvent.FailEvent event) {
-		for (APIHandler apiHandler : apiHandlers) {
-			apiHandler.onFail(event);
 		}
 	}
 

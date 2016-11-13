@@ -108,7 +108,7 @@ public class APIRegistry {
 		// player along with the entity that was set as camera
 		protected static final String AUTHENTICATE = "mcpi.auth";
 		protected static final String CLOSESOCKET = "mcpi.close";
-		
+
 		protected static final String CHAT = "chat.post";
 		protected static final String SETBLOCK = "world.setBlock";
 		protected static final String SETBLOCKS = "world.setBlocks";
@@ -299,7 +299,7 @@ public class APIRegistry {
 
 		protected static void entitySetDimension(int id, int dimension, MCEventHandler eventHandler) {
 			Entity e = getServerEntityByID(id);
-			if (e != null) { 
+			if (e != null) {
 				eventHandler.queueServerAction(new SetDimension(e, dimension));
 			}
 		}
@@ -532,16 +532,13 @@ public class APIRegistry {
 		}
 
 		public static void init() {
-			APIRegistry.registerCommand(AUTHENTICATE,
-					(String args, Scanner scan, MCEventHandler eventHandler) -> {
-						sendLine("handshake");
-					});
-			APIRegistry.registerCommand(CLOSESOCKET,
-					(String args, Scanner scan, MCEventHandler eventHandler) -> {
-						RaspberryJamMod.EVENT_BUS
-						.post(new CodeEvent.SocketCloseEvent(havePlayer ? playerMP : null));
-						sendLine("Closing Socket");
-					});
+			APIRegistry.registerCommand(AUTHENTICATE, (String args, Scanner scan, MCEventHandler eventHandler) -> {
+				sendLine("handshake");
+			});
+			APIRegistry.registerCommand(CLOSESOCKET, (String args, Scanner scan, MCEventHandler eventHandler) -> {
+				RaspberryJamMod.EVENT_BUS.post(new CodeEvent.SocketCloseEvent(havePlayer ? playerMP : null));
+				sendLine("Closing Socket");
+			});
 			APIRegistry.registerCommand(SETBLOCK, (String args, Scanner scan, MCEventHandler eventHandler) -> {
 				Location pos = getBlockLocation(scan);
 				short id = scan.nextShort();
@@ -1224,7 +1221,7 @@ public class APIRegistry {
 	}
 
 	public static boolean runCommand(String name, String args, Scanner scan, MCEventHandler eventHandler) {
-		if(!commands.containsKey(name)){
+		if (!commands.containsKey(name)) {
 			return false;
 		}
 		try {
