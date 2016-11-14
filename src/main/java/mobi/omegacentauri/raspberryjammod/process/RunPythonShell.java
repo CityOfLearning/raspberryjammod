@@ -15,12 +15,10 @@ import java.util.regex.Pattern;
 
 import mobi.omegacentauri.raspberryjammod.RaspberryJamMod;
 import mobi.omegacentauri.raspberryjammod.api.APIHandler;
-import mobi.omegacentauri.raspberryjammod.network.NetworkHandler;
-import mobi.omegacentauri.raspberryjammod.network.message.RawErrorMessage;
+import mobi.omegacentauri.raspberryjammod.network.CodeEvent;
 import mobi.omegacentauri.raspberryjammod.util.PathUtility;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.ChatComponentText;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
@@ -104,8 +102,26 @@ public class RunPythonShell {
 									}
 									// send the error to the player and then
 									// determine the problem client side
-									NetworkHandler.channel.sendTo(new RawErrorMessage(codeLine, line, lineNum),
-											(EntityPlayerMP) entity);
+									int lineLoc = 0;
+									String tempLine = lineNum;
+									int index = lineNum.indexOf(">>>");
+									while (index != -1) {
+										lineLoc++;
+										tempLine = tempLine.substring(index + 1);
+										index = tempLine.indexOf(">>>");
+									}
+
+									index = lineNum.indexOf("...");
+									tempLine = lineNum;
+									while (index != -1) {
+										lineLoc++;
+										tempLine = tempLine.substring(index + 1);
+										index = tempLine.indexOf("...");
+									}
+									//posts error to bus which is handled server side and 
+									//translated to client 
+									RaspberryJamMod.EVENT_BUS
+									.post(new CodeEvent.ErrorEvent(codeLine, line, lineLoc, entity));
 									lineNum = "";
 									codeLine = "";
 									// only report the first error
@@ -152,11 +168,7 @@ public class RunPythonShell {
 				runningScript.destroy();
 			}
 
-			List<String> cmd = new ArrayList<String>();
-			cmd.add(scriptProcessorPath);
-			cmd.add("-i");
-
-			ProcessBuilder builder = new ProcessBuilder(scriptProcessorPath);
+			ProcessBuilder builder = new ProcessBuilder(scriptProcessorPath, "-i");
 
 			builder.directory(new File("mcpipy/"));
 
@@ -164,9 +176,7 @@ public class RunPythonShell {
 			environment.put("MINECRAFT_PLAYER_NAME", player.getName());
 			environment.put("MINECRAFT_PLAYER_ID", "" + player.getEntityId());
 			environment.put("MINECRAFT_API_PORT", "" + RaspberryJamMod.currentPortNumber);
-
-			builder.command(cmd);
-
+			
 			runningScript = builder.start();
 
 			// we dont have to worry about checking if the script is alive since
