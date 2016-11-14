@@ -1,0 +1,6 @@
+NORTH = "n"
+EAST = "e"
+SOUTH = "s"
+WEST = "w"
+UP = "u"
+DOWN = "d"
