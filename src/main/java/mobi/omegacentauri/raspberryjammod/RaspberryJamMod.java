@@ -20,7 +20,6 @@ import mobi.omegacentauri.raspberryjammod.command.ScriptExternalCommand;
 import mobi.omegacentauri.raspberryjammod.events.ClientEventHandler;
 import mobi.omegacentauri.raspberryjammod.events.MCEventHandler;
 import mobi.omegacentauri.raspberryjammod.events.MCEventHandlerServer;
-import mobi.omegacentauri.raspberryjammod.network.NetworkHandler;
 import mobi.omegacentauri.raspberryjammod.util.FileUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.command.CommandHandler;
@@ -40,11 +39,13 @@ import net.minecraftforge.fml.common.eventhandler.EventBus;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-@Mod(modid = RaspberryJamMod.MODID, version = RaspberryJamMod.VERSION, name = RaspberryJamMod.NAME, acceptableRemoteVersions = "*", acceptedMinecraftVersions = "[1.8,1.9)")
+@Mod(modid = RaspberryJamMod.MODID, version = RaspberryJamMod.VERSION, name = RaspberryJamMod.NAME, acceptableRemoteVersions = "*", acceptedMinecraftVersions = "[1.8,1.9)", dependencies = RaspberryJamMod.DEPENDENCIES)
 public class RaspberryJamMod {
 	public static final String MODID = "raspberryjammod";
 	public static final String VERSION = "0.82";
 	public static final String NAME = "Raspberry Jam Mod";
+	public static final String DEPENDENCIES = "required-before:dyn;";
+	
 	public static ScriptExternalCommand[] scriptExternalCommands = null;
 
 	// config options
@@ -291,8 +292,6 @@ public class RaspberryJamMod {
 	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
 		RaspberryJamMod.logger = event.getModLog();
-
-		NetworkHandler.init();
 
 		APIRegistry.init();
 
