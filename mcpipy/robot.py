@@ -15,7 +15,7 @@ class Robot:
     def __init__(self):
         self.mc = minecraft.Minecraft()
         self.robotId = self.mc.conn.sendReceive("robot.id")
-        self.delayTime = 0.05
+        self.delayTime = 0.1
 
     def robot(self):
         """Initialize the Robot"""
@@ -23,7 +23,10 @@ class Robot:
 
     def inspect(self, *args):
         """Get block with data (x,y,z) => Block"""
-        ans = self.mc.conn.sendReceive_flat("robot.inspect", self.robotId, floorFlatten(args))
+        if len(args) > 0:
+            ans = self.mc.conn.sendReceive_flat("robot.inspect", self.robotId, floorFlatten(args))
+        else:
+            ans = self.mc.conn.sendReceive("robot.inspect", self.robotId)
         return Block(*[int(x) for x in ans.split(",")[:2]])
 
     def turn(self, angle):
@@ -45,7 +48,7 @@ class Robot:
 
     def forward(self, distance=1):
         """Move robot forward (distance: float)"""
-        self.mc.conn.send("robot.forward", self.robotId, distance)
+        self.mc.conn.sendReceive("robot.forward", self.robotId, distance)
 
     def placeBlock(self, *args):
         """Place block (id,[data]), can be empty so robot uses inventory"""
@@ -63,12 +66,20 @@ class Robot:
 
     def backward(self, distance=1):
         """Move robot backwards, will change heading"""
-        self.mc.conn.send("robot.backward", self.robotId, distance)
+        self.mc.conn.sendReceive("robot.backward", self.robotId, distance)
+        
+    def say(self, phrase):
+        """Have the robot speak"""
+        self.mc.conn.send("robot.say", self.robotId, phrase)
         
     def jump(self):
         """Make robot jump"""
         self.mc.conn.send("robot.jump", self.robotId)
         
+    def interact(self):
+        """Have the robot interact with the environment"""
+        self.mc.conn.send("robot.interact", self.robotId)
+    
     def getDirection(self):
         """Get entity direction (entityId:int) => Vec3"""
         s = self.mc.conn.sendReceive("robot.getDirection", self.robotId)
@@ -78,3 +89,8 @@ class Robot:
         """Get entity position (entityId:int) => Vec3"""
         s = self.mc.conn.sendReceive("robot.getPos", self.robotId)
         return Vec3((float(x) for x in s.split(",")))
+        
+    def getRotation(self):
+        """Get entity direction (entityId:int) => Vec3"""
+        s = self.mc.conn.sendReceive("robot.getRotation", self.robotId)
+        return float(s)
