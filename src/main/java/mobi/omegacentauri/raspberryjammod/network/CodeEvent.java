@@ -5,6 +5,21 @@ import net.minecraftforge.fml.common.eventhandler.Event;
 
 public class CodeEvent extends Event {
 	
+	public static class RobotErrorEvent extends ErrorEvent {
+
+		private final int entityId;
+		
+		public RobotErrorEvent(String code, String error, int line, EntityPlayer player, int entityId) {
+			super(code, error, line, player);
+			this.entityId = entityId;
+		}
+
+		public int getEntityId() {
+			return entityId;
+		}
+		
+	}
+	
 	public static class ErrorEvent extends CodeEvent {
 		private final EntityPlayer player;
 		private final String code;

@@ -8,7 +8,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -31,6 +30,9 @@ public class RunPythonShell {
 	private static String lineNum = "";
 
 	private static String codeLine = "";
+	
+	private static boolean isRobot = false;
+	private static int robotId = 0;
 
 	private static void globalMessage(String msg) {
 		if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
@@ -120,8 +122,13 @@ public class RunPythonShell {
 									}
 									//posts error to bus which is handled server side and 
 									//translated to client 
+									if(!isRobot){
 									RaspberryJamMod.EVENT_BUS
 									.post(new CodeEvent.ErrorEvent(codeLine, line, lineLoc, entity));
+									} else {
+										RaspberryJamMod.EVENT_BUS
+										.post(new CodeEvent.RobotErrorEvent(codeLine, line, lineLoc, entity, robotId));
+									}
 									lineNum = "";
 									codeLine = "";
 									// only report the first error
@@ -156,7 +163,13 @@ public class RunPythonShell {
 	}
 
 	public static void run(List<String> program, EntityPlayer player) {
+		run(program, player, false, 0);
+	}
+	
+	public static void run(List<String> program, EntityPlayer player, boolean isRobot, int robotId) {
 		try {
+			RunPythonShell.robotId = robotId;
+			RunPythonShell.isRobot = isRobot;
 			String path = PathUtility.getPythonExecutablePath();
 			if (path.contains("/") || path.contains(System.getProperty("file.separator"))) {
 				scriptProcessorPath = new File(path).getAbsolutePath().toString();
