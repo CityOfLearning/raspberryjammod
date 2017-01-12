@@ -1,6 +1,6 @@
 package mobi.omegacentauri.raspberryjammod.actions;
 
-import mobi.omegacentauri.raspberryjammod.util.BlockState;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.world.World;
 
 public abstract class ServerAction {
@@ -22,7 +22,5 @@ public abstract class ServerAction {
 		return 0;
 	}
 
-	public BlockState getBlockState() {
-		return new BlockState((short) 0, (short) 0);
-	}
+	public abstract IBlockState getBlockState();
 }

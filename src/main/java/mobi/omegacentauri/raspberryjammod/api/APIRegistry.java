@@ -13,16 +13,16 @@ import com.google.common.collect.Maps;
 
 import mobi.omegacentauri.raspberryjammod.RaspberryJamMod;
 import mobi.omegacentauri.raspberryjammod.actions.SetBlockNBT;
-import mobi.omegacentauri.raspberryjammod.actions.SetBlockState;
+import mobi.omegacentauri.raspberryjammod.actions.SetBlockStateWithId;
 import mobi.omegacentauri.raspberryjammod.actions.SetBlocksNBT;
 import mobi.omegacentauri.raspberryjammod.actions.SetBlocksState;
 import mobi.omegacentauri.raspberryjammod.events.MCEventHandler;
 import mobi.omegacentauri.raspberryjammod.network.CodeEvent;
-import mobi.omegacentauri.raspberryjammod.util.BlockState;
 import mobi.omegacentauri.raspberryjammod.util.Location;
 import mobi.omegacentauri.raspberryjammod.util.SetDimension;
 import mobi.omegacentauri.raspberryjammod.util.Vec3w;
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
@@ -441,6 +441,21 @@ public class APIRegistry {
 			return Location.decodeLocation(serverWorlds, x, y, z);
 		}
 
+		protected static BlockPos getBlockPos(Scanner scan) {
+			int x = scan.nextInt();
+			int y = scan.nextInt();
+			int z = scan.nextInt();
+			return new BlockPos(x, y, z);
+		}
+
+		protected static double sqVectorLength(BlockPos pos) {
+			return pos.getX() * pos.getX() + pos.getY() * pos.getY() + pos.getZ() * pos.getZ();
+		}
+		
+		protected static BlockPos rotateVector(BlockPos pos, float angle){
+			return new BlockPos(new Vec3(pos).rotateYaw(angle));
+		}
+
 		public static String getChatsAndClear() {
 			StringBuilder out = new StringBuilder();
 
@@ -545,17 +560,17 @@ public class APIRegistry {
 				short meta = scan.hasNextShort() ? scan.nextShort() : 0;
 				String tagString = getRest(scan);
 
-				SetBlockState setState;
+				SetBlockStateWithId setState;
 
 				if (tagString.contains("{")) {
 					try {
 						setState = new SetBlockNBT(pos, id, meta, JsonToNBT.getTagFromJson(tagString));
 					} catch (NBTException e) {
 						System.err.println("Cannot parse NBT");
-						setState = new SetBlockState(pos, id, meta);
+						setState = new SetBlockStateWithId(pos, id, meta);
 					}
 				} else {
-					setState = new SetBlockState(pos, id, meta);
+					setState = new SetBlockStateWithId(pos, id, meta);
 				}
 
 				eventHandler.queueServerAction(setState);
@@ -570,8 +585,8 @@ public class APIRegistry {
 				if (includeNBTWithData) {
 					sendLine(eventHandler.describeBlockState(getBlockLocation(scan)));
 				} else {
-					BlockState state = eventHandler.getBlockState(getBlockLocation(scan));
-					sendLine("" + state.id + "," + state.meta);
+					Location loc = getBlockLocation(scan);
+					sendLine("" + eventHandler.getBlockId(loc) + "," + eventHandler.getBlockMeta(loc));
 				}
 			});
 			APIRegistry.registerCommand(GETBLOCKS, (String args, Scanner scan, MCEventHandler eventHandler) -> {
@@ -617,8 +632,7 @@ public class APIRegistry {
 								out.append(eventHandler.describeBlockState(pos).replace("&", "&amp;").replace("|",
 										"&#124;"));
 							} else {
-								BlockState state = eventHandler.getBlockState(pos);
-								out.append("" + state.id + "," + state.meta);
+								out.append("" + eventHandler.getBlockId(pos) + "," + eventHandler.getBlockMeta(pos));
 							}
 						}
 					}
@@ -1214,7 +1228,7 @@ public class APIRegistry {
 	public static void registerCommand(String name, CommandRunnable executableCode) {
 		try {
 			commands.put(name, executableCode);
-			RaspberryJamMod.logger.error("Registering Command: " + name);
+			RaspberryJamMod.logger.info("Registering Command: " + name);
 		} catch (Exception e) {
 			RaspberryJamMod.logger.error("Command already registered");
 		}

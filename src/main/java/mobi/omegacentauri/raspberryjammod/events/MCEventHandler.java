@@ -8,7 +8,6 @@ import mobi.omegacentauri.raspberryjammod.actions.ServerAction;
 import mobi.omegacentauri.raspberryjammod.actions.SetBlockNBT;
 import mobi.omegacentauri.raspberryjammod.api.APIHandler;
 import mobi.omegacentauri.raspberryjammod.network.CodeEvent;
-import mobi.omegacentauri.raspberryjammod.util.BlockState;
 import mobi.omegacentauri.raspberryjammod.util.Location;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -87,8 +86,25 @@ abstract public class MCEventHandler {
 
 		return Block.getIdFromBlock(pos.getWorld().getBlockState(pos).getBlock());
 	}
+	
+	public int getBlockMeta(Location pos) {
+		int x = pos.getX();
+		int y = pos.getY();
+		int z = pos.getZ();
 
-	public BlockState getBlockState(Location pos) {
+		synchronized (serverActionQueue) {
+			for (int i = serverActionQueue.size() - 1; i >= 0; i--) {
+				ServerAction entry = serverActionQueue.get(i);
+				if (entry.contains(pos.getWorld(), x, y, z)) {
+					return entry.getBlockId();
+				}
+			}
+		}
+		IBlockState state = pos.getWorld().getBlockState(pos);
+		return state.getBlock().getMetaFromState(state);
+	}
+
+	public IBlockState getBlockState(Location pos) {
 		int x = pos.getX();
 		int y = pos.getY();
 		int z = pos.getZ();
@@ -102,7 +118,7 @@ abstract public class MCEventHandler {
 			}
 		}
 
-		return new BlockState(pos.getWorld().getBlockState(pos));
+		return pos.getWorld().getBlockState(pos);
 	}
 
 	public abstract World[] getWorlds();

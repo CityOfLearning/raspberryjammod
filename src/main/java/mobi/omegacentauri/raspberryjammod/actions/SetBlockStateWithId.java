@@ -5,14 +5,19 @@ import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.world.World;
 
-public class SetBlockState extends ServerAction {
+public class SetBlockStateWithId extends ServerAction {
 	Location pos;
-	Block block;
-	int meta;
+	short id;
+	short meta;
 
-	public SetBlockState(Location pos, Block block, int meta) {
+	public SetBlockStateWithId(Location pos, short id, short meta) {
 		this.pos = pos;
-		this.block = block;
+		this.id = id;
+		this.meta = meta;
+	}
+
+	public SetBlockStateWithId(short id, short meta) {
+		this.id = id;
 		this.meta = meta;
 	}
 
@@ -23,25 +28,26 @@ public class SetBlockState extends ServerAction {
 
 	@Override
 	public String describe() {
-		return "" + Block.getIdFromBlock(block) + "," + meta;
+		return "" + id + "," + meta + ",";
 	}
 
 	@Override
 	public void execute() {
-		Block oldBlock = pos.getWorld().getBlockState(pos).getBlock();
+		IBlockState oldState = pos.getWorld().getBlockState(pos);
+		Block oldBlock = oldState.getBlock();
 
 		if (null != pos.getWorld().getTileEntity(pos)) {
 			pos.getWorld().removeTileEntity(pos);
 		}
 
-		if ((oldBlock != block)) {
-			pos.getWorld().setBlockState(pos, safeGetStateFromMeta(block, meta), 3);
+		if ((Block.getIdFromBlock(oldBlock) != id) || (oldBlock.getMetaFromState(oldState) != meta)) {
+			pos.getWorld().setBlockState(pos, safeGetStateFromMeta(Block.getBlockById(id), meta), 3);
 		}
 	}
 
 	@Override
 	public int getBlockId() {
-		return Block.getIdFromBlock(block);
+		return id;
 	}
 
 	@Override
@@ -51,7 +57,7 @@ public class SetBlockState extends ServerAction {
 
 	@Override
 	public IBlockState getBlockState() {
-		return block.getStateFromMeta(meta);
+		return safeGetStateFromMeta(Block.getBlockById(id), meta);
 	}
 
 	public IBlockState safeGetStateFromMeta(Block b, int meta) {

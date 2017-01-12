@@ -1,6 +1,7 @@
 package mobi.omegacentauri.raspberryjammod.util;
 
 import mobi.omegacentauri.raspberryjammod.actions.ServerAction;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.server.MinecraftServer;
 
@@ -19,5 +20,11 @@ public class SetDimension extends ServerAction {
 			return;
 		}
 		entity.travelToDimension(dimension);
+	}
+
+	@Override
+	public IBlockState getBlockState() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

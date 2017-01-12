@@ -5,7 +5,7 @@ import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 
-public class SetBlockNBT extends SetBlockState {
+public class SetBlockNBT extends SetBlockStateWithId {
 	static public void scrubNBT(NBTTagCompound tag) {
 		tag.removeTag("x");
 		tag.removeTag("y");
