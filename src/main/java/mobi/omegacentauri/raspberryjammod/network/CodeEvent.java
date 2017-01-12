@@ -4,22 +4,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
 public class CodeEvent extends Event {
-	
-	public static class RobotErrorEvent extends ErrorEvent {
 
-		private final int entityId;
-		
-		public RobotErrorEvent(String code, String error, int line, EntityPlayer player, int entityId) {
-			super(code, error, line, player);
-			this.entityId = entityId;
-		}
-
-		public int getEntityId() {
-			return entityId;
-		}
-		
-	}
-	
 	public static class ErrorEvent extends CodeEvent {
 		private final EntityPlayer player;
 		private final String code;
@@ -33,10 +18,6 @@ public class CodeEvent extends Event {
 			this.player = player;
 		}
 
-		public EntityPlayer getPlayer() {
-			return player;
-		}
-
 		public String getCode() {
 			return code;
 		}
@@ -47,6 +28,10 @@ public class CodeEvent extends Event {
 
 		public int getLine() {
 			return line;
+		}
+
+		public EntityPlayer getPlayer() {
+			return player;
 		}
 	}
 
@@ -62,10 +47,6 @@ public class CodeEvent extends Event {
 			this.player = player;
 		}
 
-		public EntityPlayer getPlayer() {
-			return player;
-		}
-
 		public String getCode() {
 			return code;
 		}
@@ -73,12 +54,31 @@ public class CodeEvent extends Event {
 		public int getId() {
 			return id;
 		}
+
+		public EntityPlayer getPlayer() {
+			return player;
+		}
+	}
+
+	public static class RobotErrorEvent extends ErrorEvent {
+
+		private final int entityId;
+
+		public RobotErrorEvent(String code, String error, int line, EntityPlayer player, int entityId) {
+			super(code, error, line, player);
+			this.entityId = entityId;
+		}
+
+		public int getEntityId() {
+			return entityId;
+		}
+
 	}
 
 	public static class SocketCloseEvent extends CodeEvent {
 
 		private final EntityPlayer player;
-		
+
 		public SocketCloseEvent(EntityPlayer player) {
 			this.player = player;
 		}
@@ -91,7 +91,7 @@ public class CodeEvent extends Event {
 	public static class SuccessEvent extends CodeEvent {
 
 		private final EntityPlayer player;
-		
+
 		private final String code;
 		private final int id;
 
@@ -101,16 +101,16 @@ public class CodeEvent extends Event {
 			this.player = player;
 		}
 
-		public EntityPlayer getPlayer() {
-			return player;
-		}
-
 		public String getCode() {
 			return code;
 		}
 
 		public int getId() {
 			return id;
+		}
+
+		public EntityPlayer getPlayer() {
+			return player;
 		}
 	}
 

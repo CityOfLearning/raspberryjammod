@@ -30,7 +30,7 @@ public class RunPythonShell {
 	private static String lineNum = "";
 
 	private static String codeLine = "";
-	
+
 	private static boolean isRobot = false;
 	private static int robotId = 0;
 
@@ -120,14 +120,15 @@ public class RunPythonShell {
 										tempLine = tempLine.substring(index + 1);
 										index = tempLine.indexOf("...");
 									}
-									//posts error to bus which is handled server side and 
-									//translated to client 
-									if(!isRobot){
-									RaspberryJamMod.EVENT_BUS
-									.post(new CodeEvent.ErrorEvent(codeLine, line, lineLoc, entity));
-									} else {
+									// posts error to bus which is handled
+									// server side and
+									// translated to client
+									if (!isRobot) {
 										RaspberryJamMod.EVENT_BUS
-										.post(new CodeEvent.RobotErrorEvent(codeLine, line, lineLoc, entity, robotId));
+												.post(new CodeEvent.ErrorEvent(codeLine, line, lineLoc, entity));
+									} else {
+										RaspberryJamMod.EVENT_BUS.post(new CodeEvent.RobotErrorEvent(codeLine, line,
+												lineLoc, entity, robotId));
 									}
 									lineNum = "";
 									codeLine = "";
@@ -165,7 +166,7 @@ public class RunPythonShell {
 	public static void run(List<String> program, EntityPlayer player) {
 		run(program, player, false, 0);
 	}
-	
+
 	public static void run(List<String> program, EntityPlayer player, boolean isRobot, int robotId) {
 		try {
 			RunPythonShell.robotId = robotId;
@@ -189,7 +190,7 @@ public class RunPythonShell {
 			environment.put("MINECRAFT_PLAYER_NAME", player.getName());
 			environment.put("MINECRAFT_PLAYER_ID", "" + player.getEntityId());
 			environment.put("MINECRAFT_API_PORT", "" + RaspberryJamMod.currentPortNumber);
-			
+
 			runningScript = builder.start();
 
 			// we dont have to worry about checking if the script is alive since
