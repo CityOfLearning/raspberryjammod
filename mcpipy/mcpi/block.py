@@ -1,6 +1,6 @@
 from __future__ import absolute_import
 from . import settings
-import re
+import re, traceback, sys
 
 class Block:
     """Minecraft PI block description. Can be sent to Minecraft.setBlock/s"""
@@ -14,9 +14,9 @@ class Block:
     
     MAX_MATERIAL = MATERIAL_ROUGH
     
-    def __init__(self, id, data=0, nbt=None):
+    def __init__(self, id, meta=0, nbt=None):
         self.id = id
-        self.data = data
+        self.meta = meta
         if nbt is not None and len(nbt)==0:
             self.nbt = None
         else:
@@ -24,20 +24,20 @@ class Block:
 
     def __eq__(self, rhs):
         try:
-            return self.id == rhs.id and self.data == rhs.data and self.nbt == rhs.nbt
+            return self.id == rhs.id and self.meta == rhs.meta and self.nbt == rhs.nbt
         except:
-            return self.data == 0 and self.nbt is None and self.id == rhs
+            return self.meta == 0 and self.nbt is None and self.id == rhs
 
     def __ne__(self, rhs):
         return not self.__eq__(rhs)
 
     def __hash__(self):
-        h = (self.id << 8) + self.data
+        h = (self.id << 8) + self.meta
         if self.nbt is not None:
             h ^= hash(self.nbt)
 
-    def withData(self, data):
-        return Block(self.id, data)
+    def withData(self, meta):
+        return Block(self.id, meta)
         
     def getRGBA(self):
         try:
@@ -47,6 +47,15 @@ class Block:
                 return Block.toRGBA[Block(self.id)][0:4]
             except:
                 return Block.toRGBA[Block(1)][0:4]
+                
+    def getName(self):
+        try:
+            return Block.idToBlockName[self]
+        except:
+            try:
+                return Block.idToBlockName[Block(self.id)]
+            except:
+                return Block.idToBlockName[Block(1)]
                 
     def getMaterial(self):
         entry = None
@@ -63,42 +72,47 @@ class Block:
             return entry[4]
 
     def __iter__(self):
-        """Allows a Block to be sent whenever id [and data] is needed"""
+        """Allows a Block to be sent whenever id [and meta] is needed"""
         if self.nbt is not None:
-           return iter((self.id, self.data, self.nbt))
+           return iter((self.id, self.meta, self.nbt))
         else:
-           return iter((self.id, self.data))
+           return iter((self.id, self.meta))
            
     def __hash__(self):
-        return hash((self.id, self.data, self.nbt))
+        return hash((self.id, self.meta, self.nbt))
 
+#lets not print unless we ask it to
     def __repr__(self):
-        if self.nbt is None:
-            return "Block(%d, %d)"%(self.id, self.data)
-        else:
-            return "Block(%d, %d, %s)"%(self.id, self.data, repr(self.nbt))
-
+        return self.getName()
+#        if self.nbt is None:
+#            return "Block(%d, %d)"%(self.id, self.meta)
+#        else:
+#            return "Block(%d, %d, %s)"%(self.id, self.meta, repr(self.nbt))
+            
+    def __str__(self):
+        return self.getName()
+    
     @staticmethod
     def byName(name, default=None):
         components = re.split('[\s,:]+', name.strip().replace(".id", "").upper(), maxsplit=3)
-        newBlock = Block(None,data=0,nbt=None)
+        newBlock = Block(None,meta=0,nbt=None)
         if components[0][0].isalpha():
             try:
                 b = globals()[components[0]]
                 if isinstance(b, Block):
                     newBlock.id = b.id
-                    newBlock.data = b.data
+                    newBlock.meta = b.meta
             except:
                 if default is None:
                     newBlock.id = STONE.id
-                    newBlock.data = STONE.data
+                    newBlock.meta = STONE.meta
                 else:
                     newBlock.id = default.id
-                    newBlock.data = default.data
+                    newBlock.meta = default.meta
         if newBlock.id is None:
             newBlock.id = int(components[0])
         if len(components) > 1 and components[1].isdigit():
-            newBlock.data = int(components[1])
+            newBlock.meta = int(components[1])
         if components[-1][0] == '{':
             newBlock.nbt = components[-1]
         return newBlock
@@ -432,6 +446,297 @@ TRIPWIRE_HOOK = Block(131)
 VINE = Block(106)
 WATERLILY = Block(111)
 WHEAT = Block(59)
+
+Block.idToBlockName = {
+      AIR: "Air",
+      ANVIL: "Anvil",
+      BEACON: "Beacon",
+      BED_OBJECT: "Bed",
+      BED_BLOCK: "Bed",
+      BEDROCK: "Bedrock",
+      BEETROOT: "Beetroot",
+      BONE_BLOCK: "Bone",
+      BOOKSHELF: "Bookshelf",
+      BREWING_STAND: "Brewing Stand",
+      BRICK_BLOCK: "Brick",
+      CACTUS: "Cactus",
+      CAKE: "Cake",
+      CARPET_BLACK: "Black Carpet",
+      CARPET_BLUE: "Blue Carpet",
+      CARPET_BROWN: "Brown Carpet",
+      CARPET_CYAN: "Cyan Carpet",
+      CARPET_GRAY: "Gray Carpet",
+      CARPET_GREEN: "Green Carpet",
+      CARPET_LIGHT_BLUE: "Light Blue Carpet",
+      CARPET_LIGHT_GRAY: "Light Gray Carpet",
+      CARPET_LIME: "Lime Carpet",
+      CARPET_MAGENTA: "Magenta Carpet",
+      CARPET_ORANGE: "Orange Carpet",
+      CARPET_PINK: "Pink Carpet",
+      CARPET_PURPLE: "Purple Carpet",
+      CARPET_RED: "Red Carpet",
+      CARPET_WHITE: "White Carpet",
+      CARPET_YELLOW: "Yellow Carpet",
+      CARROTS: "Carrots",
+      CAULDRON: "Cauldron",
+      CHEST: "Chest",
+      CHORUS_FLOWER: "Chorus Flower",
+      CHORUS_PLANT: "Chorus Plant",
+      CLAY: "Clay",
+      COAL_BLOCK: "Coal Block",
+      COAL_ORE: "Coal Ore",
+      COCOA_PLANT: "Cocoa",
+      COBBLESTONE: "Cobblestone",
+      STAIRS_COBBLESTONE: "Cobblestone Stairs",
+      COMMAND_BLOCK: "Command Block",
+      COMPARATOR_OFF: "Comparator",
+      COMPARATOR_ON: "Comparator",
+      CRAFTING_TABLE: "Crafting Table",
+      DANDELION: "Dandelion",
+      DAYLIGHT_SENSOR: "Daylight Sensor",
+      DEADBUSH: "Dead Bush",
+      DIAMOND_BLOCK: "Diamond Block",
+      DIAMOND_ORE: "Diamond Ore",
+      DIRT: "Dirt",
+      DIRT_COARSE: "Coarse Dirt",
+      DIRT_PODZOL: "Podzol",
+      DISPENSER: "Dispenser",
+      DOOR_ACACIA: "Acacia Door",
+      DOOR_BIRCH: "Brich Door",
+      DOOR_DARK_OAK: "Dark Oak Door",
+      DOOR_JUNGLE: "Jungle Wood Door",
+      DOOR_SPRUCE: "Spruce Door",
+      DOOR_WOOD: "Oak Door",
+      WOOD_BUTTON: "Wooden Button",
+      DOOR_IRON: "Iron Door",
+      FENCE: "Fence",
+      FENCE_GATE: "Fence Gate",
+      DOUBLE_TALLGRASS: "Tall Grass",
+      DRAGON_EGG: "Dragon Egg",
+      DROPPER: "Dropper",
+      EMERALD_BLOCK: "Emerald Block",
+      EMERALD_ORE: "Emerald Ore",
+      ENCHANTING_TABLE: "Enchanting Table",
+      END_BRICKS: "End Bricks",
+      END_PORTAL_FRAME: "End Portal Frame",
+      END_ROD: "End Rod",
+      END_STONE: "End Stone",
+      FARMLAND: "Farm Land",
+      FERN: "Fern",
+      FIRE: "Fire",
+      FLOWER_ALLIUM: "Allium Flower",
+      FLOWER_CYAN: "Cyan Flower",
+      FLOWER_AZURE_BLUET: "Azure Bluet Flower",
+      FLOWER_BLUE_ORCHID: "Blue Orchid Flower",
+      FLOWER_OXEYE_DAISY: "Oxeye Daisy Flower",
+      FLOWER_POT: "Flower Pot",
+      FLOWER_TULIP_ORANGE: "Orange Tulip",
+      FLOWER_TULIP_PINK: "Pink Tulip",
+      FLOWER_TULIP_RED: "Red Tulip",
+      FLOWER_TULIP_WHITE: "White Tulip",
+      FROSTED_ICE: "Frosted Ice",
+      FURNACE_ACTIVE: "Furnace",
+      FURNACE_INACTIVE: "Furnace",
+      GLASS: "Glass",
+      GLASS_PANE: "Glass Pane",
+      GLOWSTONE_BLOCK: "Glowstone",
+      GOLD_BLOCK: "Gold Block",
+      GOLD_ORE: "Gold Ore",  
+      GRASS: "Grass",
+      GRASS_PATH: "Grass Path",
+      GRAVEL: "Gravel",
+      HARDENED_CLAY: "Hardened Clay",
+      HARDENED_CLAY_STAINED_BLACK: "Black Hardened Clay",
+      HARDENED_CLAY_STAINED_BLUE: "Blue Hardened Clay",
+      HARDENED_CLAY_STAINED_BROWN: "Brown Hardened Clay",
+      HARDENED_CLAY_STAINED_CYAN: "Cyan Hardened Clay",
+      HARDENED_CLAY_STAINED_GRAY: "Gray Hardened Clay",
+      HARDENED_CLAY_STAINED_GREEN: "Green Hardened Clay",
+      HARDENED_CLAY_STAINED_LIGHT_BLUE: "Light Blue Hardened Clay",
+      HARDENED_CLAY_STAINED_LIGHT_GRAY: "Light Gray Hardened Clay",
+      HARDENED_CLAY_STAINED_LIME: "Lime Hardened Clay",
+      HARDENED_CLAY_STAINED_MAGENTA: "Magenta Hardened Clay",
+      HARDENED_CLAY_STAINED_ORANGE: "Orange Hardened Clay",
+      HARDENED_CLAY_STAINED_PINK: "Pink Hardened Clay",
+      HARDENED_CLAY_STAINED_PURPLE: "Purple Hardened Clay",
+      HARDENED_CLAY_STAINED_RED: "Red Hardened Clay",
+      HARDENED_CLAY_STAINED_WHITE: "White Hardened Clay",
+      HARDENED_CLAY_STAINED_YELLOW: "Yellow Hardened Clay",
+      HAY_BLOCK: "Hay Block",
+      HOPPER: "Hopper",
+      ICE: "Ice",
+      ICE_PACKED: "Packed Ice",
+      IRON_BARS: "Iron Bars",
+      IRON_BLOCK: "Iron Block",
+      IRON_ORE: "Iron Ore",
+      IRON_TRAPDOOR: "Iron Trapdoor",
+      ITEM_FRAME: "Item Frame",
+      JUKEBOX: "Jukebox",
+      LADDER: "Ladder",
+      LAPIS_LAZULI_BLOCK: "Lapis Lazuli Block",
+      LAPIS_LAZULI_ORE: "Lapis Lazuli Ore",
+      LARGE_FERN: "Fern",
+      LAVA_FLOWING: "Lava",
+      LAVA_STATIONARY: "Lava",
+      LEAVES_ACACIA_PERMANENT: "Acacia Leaves",
+      LEAVES_ACACIA_DECAYABLE: "Acacia Leaves",
+      LEAVES_DARK_OAK_PERMANENT: "Dark Oak Leaves",
+      LEAVES_DARK_OAK_DECAYABLE: "Dark Oak Leaves",
+      LEAVES_BIRCH_PERMANENT: "Birch Leaves",
+      LEAVES_BIRCH_DECAYABLE: "Birch Leaves",
+      LEAVES_JUNGLE_PERMANENT: "Jungle Leaves",
+      LEAVES_JUNGLE_DECAYABLE: "Jungle Leaves",
+      LEAVES_OAK_PERMANENT: "Oak Leaves",
+      LEAVES_OAK_DECAYABLE: "Oak Leaves",
+      LEAVES_SPRUCE_PERMANENT: "Spruce Leaves",
+      LEAVES_SPRUCE_DECAYABLE: "Spruce Leaves",
+      LEVER: "Lever",
+      LILAC: "Lilac",
+      ACACIA_WOOD: "Acacia Wood",
+      DARK_OAK_WOOD: "Dark Oak Wood",
+      BIRCH_WOOD: "Birch Wood",
+      JUNGLE_WOOD: "Jungle Wood",
+      STAIRS_WOOD: "Wood Stairs",
+      WOOD: "Oak Wood",
+      SPRUCE_WOOD: "Spruce Wood",
+      MAGMA: "Magma",
+      MELON_BLOCK: "Melon",
+      MOB_SPAWNER: "Mob Spawner",
+      MOSS_STONE: "Moss Stone",
+      MUSHROOM_BLOCK_BROWN: "Brown Mushroom",
+      MUSHROOM_BLOCK_RED: "Red Mushroom",
+      MUSHROOM_BROWN: "Brown Mushroom",
+      MUSHROOM_RED: "Red Mushroom",
+      MYCELIUM: "Mycelium",
+      NETHER_BRICK: "Nether Brick",
+      NETHER_WART_BLOCK: "Nether Wart",
+      NETHER_WART: "Nether Wart",
+      NETHERRACK: "Netherrack",
+      NOTEBLOCK: "Note Block",
+      OBSIDIAN: "Obsidian",
+      PEONY: "Peony",
+      PISTON: "Piston",
+      PISTON_HEAD: "Piston",
+      WOOD_PLANKS_ACACIA: "Acacia Wood Planks",
+      WOOD_PLANKS_DARK_OAK: "Dark Oak Wood Planks",
+      WOOD_PLANKS_BIRCH: "Birch Wood Planks",
+      WOOD_PLANKS_JUNGLE: "Jungle Wood Planks",
+      WOOD_PLANKS_OAK: "Oak Wood Planks",
+      WOOD_PLANKS_SPRUCE: "Spruce Wood Planks",
+      PORTAL: "Portal",
+      POTATOES: "Potatoes",
+      PRISMARINE_BRICKS: "Prismarine Bricks",
+      PRISMARINE_DARK: "Dark Prismarine",
+      PRISMARINE: "Prismarine",
+      PUMPKIN_INACTIVE: "Pumpkin",
+      PUMPKIN_ACTIVE: "Jack O' Lantern",
+      PURPUR_BLOCK: "Purpur Block",
+      PURPUR_PILLAR: "Purpur Pillar",
+      QUARTZ_BLOCK: "Quartz Block",
+      QUARTZ_BLOCK_CHISELED: "Chiseled Quartz Block",
+      NETHER_QUARTZ_ORE: "Nether Quartz",
+      RAIL_ACTIVATOR: "Activator Rail",
+      RAIL_DETECTOR: "Detector Rail",
+      RAIL_GOLDEN: "Powered Rail",
+      RAIL_NORMAL: "Rail",
+      RED_NETHER_BRICK: "Nether Brick",
+      RED_SAND: "Red Sand",
+      RED_SANDSTONE_CHISELED: "Chiseled Red Sandstone",
+      RED_SANDSTONE: "Red Sandstone",
+      RED_SANDSTONE_SMOOTH: "Smooth Red Standstone",
+      REDSTONE_BLOCK: "Redstone Block",
+      REDSTONE_LAMP_INACTIVE: "Redstone Lamp",
+      REDSTONE_LAMP_ACTIVE: "Redstone Lamp",
+      REDSTONE_ORE: "Redstone Ore",
+      REDSTONE_TORCH_INACTIVE: "Redstone Torch",
+      REDSTONE_TORCH_ACTIVE: "Redstone Torch",
+      SUGAR_CANE: "Sugar Cane",
+      REDSTONE_REPEATER_INACTIVE: "Redstone Repeater",
+      REDSTONE_REPEATER_ACTIVE: "Redstone Repeater",
+      ROSE_BUSH: "Rose",
+      SAND: "Sand",
+      SANDSTONE_CHISELED: "Chiseled Sandstone",
+      SANDSTONE: "Sandstone",
+      SANDSTONE_SMOOTH: "Smooth Sandstone",
+      SAPLING_ACACIA: "Acacia Sapling",
+      SAPLING_BIRCH: "Birch Sapling",
+      SAPLING_JUNGLE: "Jungle Sapling",
+      SAPLING: "Oak Sapling",
+      SAPLING_DARK_OAK: "Dark Oak Sapling",
+      SAPLING_SPRUCE: "Spruce Sapling",
+      SEA_LANTERN: "Sea Lantern",
+      SLIME_BLOCK: "Slime Block",
+      SNOW: "Snow",
+      SNOW_BLOCK: "Snow Block",
+      SOUL_SAND: "Soul Sand",
+      SPONGE: "Sponge",
+      SPONGE_WET: "Sponge",
+      STAINED_GLASS_BLACK: "Black Stained Glass",
+      STAINED_GLASS_BLUE: "Blue Stained Glass",
+      STAINED_GLASS_BROWN: "Brown Stained Glass",
+      STAINED_GLASS_CYAN: "Cyan Stained Glass",
+      STAINED_GLASS_GRAY: "Gray Stained Glass",
+      STAINED_GLASS_GREEN: "Green Stained Glass",
+      STAINED_GLASS_LIGHT_BLUE: "Light Blue Stained Glass",
+      STAINED_GLASS_LIGHT_GRAY: "Light Gray Stained Glass",
+      STAINED_GLASS_LIME: "Lime Stained Glass",
+      STAINED_GLASS_MAGENTA: "Magenta Stained Glass",
+      STAINED_GLASS_ORANGE: "Orange Stained Glass",
+      STAINED_GLASS_PINK: "Pink Stained Glass",
+      STAINED_GLASS_PURPLE: "Purple Stained Glass",
+      STAINED_GLASS_RED: "Red Stained Glass",
+      STAINED_GLASS_WHITE: "White Stained Glass",
+      STAINED_GLASS_YELLOW: "Yellow Stained Glass",
+      STONE: "Stone",
+      STONE_BUTTON: "Stone Button",
+      STONE_ANDESITE: "Andesite",
+      STONE_ANDESITE_SMOOTH: "Smooth Andesite",
+      STONE_DIORITE: "Diorite",
+      STONE_DIORITE_SMOOTH: "Smooth Diorite",
+      STONE_GRANITE: "Granite",
+      STONE_GRANITE_SMOOTH: "Smooth Granite",
+      STONE_SLAB: "Stone Slab",
+      STONE_SLAB_DOUBLE: "Double Stone Slab",
+      STONE_BRICK: "Stone Brick",
+      STONE_BRICK_CHISELED: "Chiseled Stone Brick",
+      STONE_BRICK_CRACKED: "Cracked Stone Brick",
+      STONE_BRICK_MOSSY: "Mossy Stone Brick",
+      SUNFLOWER: "Sunflower",  
+      GRASS_TALL: "Grass",
+      TNT: "TNT",
+      TORCH: "Torch",
+      TRAPDOOR: "Trapdoor",
+      TRIPWIRE: "Tripwire",
+      TRIPWIRE_HOOK: "Tripwire Hook",
+      VINE: "Vine",
+      WATER_FLOWING: "Water",
+      WATER_STATIONARY: "Water",
+      WATERLILY: "Waterlily",
+      COBWEB: "Web",
+      WHEAT: "Wheat",
+      WOOD_PLANKS_ACACIA: "Acacia Planks",
+      WOOD_PLANKS_BIRCH: "Birch Planks",
+      WOOD_PLANKS_DARK_OAK: "Dark Oak Planks",
+      WOOD_PLANKS_JUNGLE: "Jungle Wood Planks",
+      WOOD_PLANKS_OAK: "Oak Planks",
+      WOOD_PLANKS_SPRUCE: "Spruce Planks",
+      WOOL_BLACK: "Black Wool",
+      WOOL_BLUE: "Blue Wool",
+      WOOL_BROWN: "Brown Wool",
+      WOOL_CYAN: "Cyan Wool",
+      WOOL_GRAY: "Gray Wool",
+      WOOL_GREEN: "Green Wool",
+      WOOL_LIGHT_BLUE: "Light Blue Wool",
+      WOOL_LIGHT_GRAY: "Light Gray Wool",
+      WOOL_LIME: "Lime Wool",
+      WOOL_MAGENTA: "Magenta Wool",
+      WOOL_ORANGE: "Orange Wool",
+      WOOL_PINK: "Pink Wool",
+      WOOL_PURPLE: "Purple Wool",
+      WOOL_RED: "Red Wool",
+      WOOL_WHITE: "White Wool",
+      WOOL_YELLOW: "Blue Wool",
+}
 
 Block.toRGBA = {
       AIR: (255, 255, 255, 0),
