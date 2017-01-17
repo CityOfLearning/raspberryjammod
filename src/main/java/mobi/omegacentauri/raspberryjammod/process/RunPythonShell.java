@@ -184,7 +184,7 @@ public class RunPythonShell {
 
 			ProcessBuilder builder = new ProcessBuilder(scriptProcessorPath, "-i");
 
-			builder.directory(new File("mcpipy/"));
+			builder.directory(new File("mcpy/"));
 
 			Map<String, String> environment = builder.environment();
 			environment.put("MINECRAFT_PLAYER_NAME", player.getName());

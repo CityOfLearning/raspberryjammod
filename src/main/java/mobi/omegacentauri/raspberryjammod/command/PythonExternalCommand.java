@@ -24,7 +24,7 @@ public class PythonExternalCommand extends ScriptExternalCommand {
 
 	@Override
 	public List<String> getCommandAliases() {
-		List<String> aliases = new ArrayList<String>();
+		List<String> aliases = new ArrayList<>();
 		aliases.add(getCommandName());
 		aliases.add("py");
 		return aliases;
@@ -47,7 +47,7 @@ public class PythonExternalCommand extends ScriptExternalCommand {
 
 	@Override
 	protected String[] getScriptPaths() {
-		return new String[] { "mcpipy/", "mcpimods/python/" };
+		return new String[] { "mcpy/" };
 	}
 
 	@Override
