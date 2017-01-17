@@ -24,8 +24,8 @@
 """
 from __future__ import print_function
 
-from mcpi.minecraft import *
-from mcpi.block import *
+from ..core.minecraft import *
+from ..core.block import *
 from math import *
 import sys
 from copy import copy

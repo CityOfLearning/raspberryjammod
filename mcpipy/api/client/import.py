@@ -7,7 +7,7 @@
 
 from mine import *
 from sys import argv,version
-import mcpi.nbt as nbt
+import ..core.nbt as nbt
 import json
 
 NEED_SUPPORT = set((block.SAPLING.id,block.WATER_FLOWING.id,block.LAVA_FLOWING.id,block.GRASS_TALL.id,34,block.FLOWER_YELLOW.id,

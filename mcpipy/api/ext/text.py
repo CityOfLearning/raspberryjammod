@@ -4,7 +4,7 @@
 
 import sys
 import time
-import mcpi.minecraft as minecraft
+import ..core.minecraft as minecraft
 
 ALIGN_LEFT = 0
 ALIGN_RIGHT = 1

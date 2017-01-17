@@ -1,12 +1,7 @@
-#
-# Code by Alexander Pruss and under the MIT license
-#
-
-import mcpi.minecraft as minecraft
-import mcpi.block as block
-import mcpi.facing as facing
-from mcpi.vec3 import Vec3
-from mcpi.util import flatten, floorFlatten
+from ..core import minecraft as minecraft
+from ..core import block as block
+from ..core.vec3 import Vec3
+from ..core.util import flatten, floorFlatten
 import time
 
 class Robot:

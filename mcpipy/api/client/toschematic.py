@@ -3,7 +3,7 @@ from ast import literal_eval
 import os
 import sys
 import re
-import mcpi.nbt as nbt
+import ..core.nbt as nbt
 from struct import pack
 from vehicle import getLoadPath
 

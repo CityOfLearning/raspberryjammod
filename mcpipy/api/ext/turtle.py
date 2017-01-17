@@ -2,9 +2,9 @@
 # Code by Alexander Pruss and under the MIT license
 #
 
-import mcpi.minecraft as minecraft
-import mcpi.block as block
-from mcpi.entity import *
+import ..core.minecraft as minecraft
+import ..core.block as block
+from ..core.entity import *
 import numbers
 import copy
 import time
