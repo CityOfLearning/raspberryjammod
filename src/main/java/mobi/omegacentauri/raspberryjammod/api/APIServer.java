@@ -28,7 +28,7 @@ public class APIServer {
 
 	public APIServer(MCEventHandler eventHandler, int startPort, int endPort, int wsPort, boolean clientSide)
 			throws IOException {
-		socketList = new ArrayList<Socket>();
+		socketList = new ArrayList<>();
 		this.eventHandler = eventHandler;
 		controlServer = !clientSide;
 		serverSocket = null;

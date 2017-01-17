@@ -41,7 +41,7 @@ public class WSServer extends WebSocketServer {
 		RaspberryJamMod.logger.info("Websocket server on " + port);
 		controlServer = !clientSide;
 		this.eventHandler = eventHandler;
-		handlers = new HashMap<WebSocket, APIHandler>();
+		handlers = new HashMap<>();
 	}
 
 	@Override

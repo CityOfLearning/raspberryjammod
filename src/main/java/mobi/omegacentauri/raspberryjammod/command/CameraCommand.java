@@ -31,7 +31,7 @@ public class CameraCommand implements ICommand {
 	public List addTabCompletionOptions(ICommandSender sender, String[] args, BlockPos pos) {
 
 		if (args.length == 1) {
-			List<String> options = new ArrayList<String>();
+			List<String> options = new ArrayList<>();
 			if ("distance".startsWith(args[0])) {
 				options.add("distance");
 			}
@@ -40,7 +40,7 @@ public class CameraCommand implements ICommand {
 			}
 			return options;
 		} else if ((args.length == 2) && args[0].equals("debug")) {
-			List<String> options = new ArrayList<String>();
+			List<String> options = new ArrayList<>();
 			options.add("on");
 			options.add("off");
 			options.add("toggle");
@@ -61,7 +61,7 @@ public class CameraCommand implements ICommand {
 
 	@Override
 	public List<String> getCommandAliases() {
-		List<String> aliases = new ArrayList<String>();
+		List<String> aliases = new ArrayList<>();
 		aliases.add(getCommandName());
 		return aliases;
 	}

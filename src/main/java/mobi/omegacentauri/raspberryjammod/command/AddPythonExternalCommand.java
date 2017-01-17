@@ -18,7 +18,7 @@ public class AddPythonExternalCommand extends PythonExternalCommand {
 
 	@Override
 	public List getCommandAliases() {
-		List<String> aliases = new ArrayList<String>();
+		List<String> aliases = new ArrayList<>();
 		aliases.add(getCommandName());
 		aliases.add("apy");
 		return aliases;

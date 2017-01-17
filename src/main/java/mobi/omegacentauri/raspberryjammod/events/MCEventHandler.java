@@ -18,11 +18,11 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 abstract public class MCEventHandler {
-	protected List<ServerAction> serverActionQueue = new ArrayList<ServerAction>();
+	protected List<ServerAction> serverActionQueue = new ArrayList<>();
 	public volatile boolean stopChanges = false;
 	protected volatile boolean pause = false;
 	protected boolean doRemote;
-	protected List<APIHandler> apiHandlers = new ArrayList<APIHandler>();
+	protected List<APIHandler> apiHandlers = new ArrayList<>();
 
 	public MCEventHandler() {
 	}
@@ -86,7 +86,7 @@ abstract public class MCEventHandler {
 
 		return Block.getIdFromBlock(pos.getWorld().getBlockState(pos).getBlock());
 	}
-	
+
 	public int getBlockMeta(Location pos) {
 		int x = pos.getX();
 		int y = pos.getY();

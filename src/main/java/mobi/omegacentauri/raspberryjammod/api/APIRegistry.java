@@ -22,7 +22,6 @@ import mobi.omegacentauri.raspberryjammod.util.Location;
 import mobi.omegacentauri.raspberryjammod.util.SetDimension;
 import mobi.omegacentauri.raspberryjammod.util.Vec3w;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
@@ -179,8 +178,8 @@ public class APIRegistry {
 		protected static boolean havePlayer;
 		protected static int playerId;
 		protected static EntityPlayerMP playerMP;
-		protected static List<HitDescription> hits = new LinkedList<HitDescription>();
-		protected static List<ChatDescription> chats = new LinkedList<ChatDescription>();
+		protected static List<HitDescription> hits = new LinkedList<>();
+		protected static List<ChatDescription> chats = new LinkedList<>();
 		private volatile static boolean restrictToSword = true;
 		private volatile static boolean detectLeftClick = RaspberryJamMod.leftClickToo;
 
@@ -448,14 +447,6 @@ public class APIRegistry {
 			return new BlockPos(x, y, z);
 		}
 
-		protected static double sqVectorLength(BlockPos pos) {
-			return pos.getX() * pos.getX() + pos.getY() * pos.getY() + pos.getZ() * pos.getZ();
-		}
-		
-		protected static BlockPos rotateVector(BlockPos pos, float angle){
-			return new BlockPos(new Vec3(pos).rotateYaw(angle));
-		}
-
 		public static String getChatsAndClear() {
 			StringBuilder out = new StringBuilder();
 
@@ -694,7 +685,7 @@ public class APIRegistry {
 				chat(args);
 			});
 			APIRegistry.registerCommand(WORLDGETPLAYERIDS, (String args, Scanner scan, MCEventHandler eventHandler) -> {
-				List<Integer> players = new ArrayList<Integer>();
+				List<Integer> players = new ArrayList<>();
 				for (World w : serverWorlds) {
 					for (EntityPlayer p : w.playerEntities) {
 						players.add(p.getEntityId());
@@ -1051,6 +1042,10 @@ public class APIRegistry {
 			}
 		}
 
+		protected static BlockPos rotateVector(BlockPos pos, float angle) {
+			return new BlockPos(new Vec3(pos).rotateYaw(angle));
+		}
+
 		protected static void sendLine(BlockPos pos) {
 			sendLine("" + pos.getX() + "," + pos.getY() + "," + pos.getZ());
 		}
@@ -1184,6 +1179,10 @@ public class APIRegistry {
 					}
 				}
 			}
+		}
+
+		protected static double sqVectorLength(BlockPos pos) {
+			return (pos.getX() * pos.getX()) + (pos.getY() * pos.getY()) + (pos.getZ() * pos.getZ());
 		}
 
 		public static int trunc(double x) {

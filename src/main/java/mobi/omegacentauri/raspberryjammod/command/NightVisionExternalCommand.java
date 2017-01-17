@@ -25,7 +25,7 @@ public class NightVisionExternalCommand implements ICommand {
 	public List addTabCompletionOptions(ICommandSender sender, String[] args, BlockPos pos) {
 
 		if (args.length == 1) {
-			List<String> options = new ArrayList<String>();
+			List<String> options = new ArrayList<>();
 			options.add("off");
 			options.add("on");
 			return options;
@@ -45,7 +45,7 @@ public class NightVisionExternalCommand implements ICommand {
 
 	@Override
 	public List<String> getCommandAliases() {
-		List<String> aliases = new ArrayList<String>();
+		List<String> aliases = new ArrayList<>();
 		aliases.add(getCommandName());
 		aliases.add("nv");
 		return aliases;

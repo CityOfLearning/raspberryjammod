@@ -33,7 +33,7 @@ public abstract class ScriptExternalCommand implements ICommand {
 
 	public ScriptExternalCommand(boolean clientSide) {
 		this.clientSide = clientSide;
-		runningScripts = new LinkedList<Process>();
+		runningScripts = new LinkedList<>();
 		String path = PathUtility.getPythonExecutablePath();
 		if (path.contains("/") || path.contains(System.getProperty("file.separator"))) {
 			scriptProcessorPath = new File(path).getAbsolutePath().toString();
@@ -101,7 +101,7 @@ public abstract class ScriptExternalCommand implements ICommand {
 
 	@Override
 	public List getCommandAliases() {
-		List<String> aliases = new ArrayList<String>();
+		List<String> aliases = new ArrayList<>();
 		aliases.add(getCommandName());
 		return aliases;
 	}
@@ -134,7 +134,7 @@ public abstract class ScriptExternalCommand implements ICommand {
 	abstract protected String[] getScriptPaths();
 
 	protected List<String> getScripts(String subdir) {
-		List<String> scripts = new ArrayList<String>();
+		List<String> scripts = new ArrayList<>();
 		String ext = getExtension();
 
 		for (String dir : getScriptPaths()) {
@@ -250,7 +250,7 @@ public abstract class ScriptExternalCommand implements ICommand {
 			throw new CommandException("Cannot find script");
 		}
 
-		List<String> cmd = new ArrayList<String>();
+		List<String> cmd = new ArrayList<>();
 		cmd.add(scriptProcessorPath);
 		cmd.add(script.getName());
 		for (int i = 1; (arg + i) < args.length; i++) {
