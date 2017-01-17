@@ -30,12 +30,12 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
 import net.minecraftforge.fml.common.eventhandler.EventBus;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -45,7 +45,7 @@ public class RaspberryJamMod {
 	public static final String VERSION = "0.82";
 	public static final String NAME = "Raspberry Jam Mod";
 	public static final String DEPENDENCIES = "required-before:dyn;";
-	
+
 	public static ScriptExternalCommand[] scriptExternalCommands = null;
 
 	// config options
@@ -184,13 +184,13 @@ public class RaspberryJamMod {
 		net.minecraftforge.client.ClientCommandHandler.instance.registerCommand(cameraCommand);
 	}
 
-	@Mod.EventHandler
+	@SubscribeEvent
 	@SideOnly(Side.CLIENT)
 	public void onConfigChanged(net.minecraftforge.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent event) {
 		RaspberryJamMod.logger.info("config changed");
 	}
 
-	@EventHandler
+	@Mod.EventHandler
 	public void onServerStarting(FMLServerStartingEvent event) {
 		synchronizeConfig();
 
@@ -260,7 +260,7 @@ public class RaspberryJamMod {
 		}
 	}
 
-	@EventHandler
+	@Mod.EventHandler
 	public void onServerStopping(FMLServerStoppingEvent event) {
 		if (clientOnlyAPI) {
 			return;
