@@ -6,10 +6,6 @@ class Facing:
 
     def __repr__(self):
         return self.name.capitalize()
-#        if self.nbt is None:
-#            return "Block(%d, %d)"%(self.id, self.data)
-#        else:
-#            return "Block(%d, %d, %s)"%(self.id, self.data, repr(self.nbt))
             
     def __str__(self):
         return self.name.capitalize()
@@ -27,7 +23,7 @@ def fromId(id):
         return UP
     if(id == DOWN.id):
         return DOWN
-    return null
+    raise ValueError(str(id) + " is not a valid facing Id")
     
 def fromName(name):
     name = name.lower()
@@ -43,7 +39,7 @@ def fromName(name):
         return UP
     if(name == DOWN.name):
         return DOWN
-    return null
+    raise ValueError(name + " is not a valid facing value")
     
 def fromLetter(short):
     short = short.lower() 
@@ -59,7 +55,7 @@ def fromLetter(short):
         return UP
     if(short == DOWN.short):
         return DOWN
-    return null
+    raise ValueError(short + " is not a valid facing value")
 
 NORTH = Facing(2, "n", "north")
 EAST = Facing(5, "e", "east")
