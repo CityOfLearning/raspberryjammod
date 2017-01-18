@@ -1,5 +1,6 @@
 from ..core import minecraft as minecraft
 from ..core import block as block
+from ..core import facing as facing
 from ..core.vec3 import Vec3
 from ..core.util import flatten, floorFlatten
 import time
@@ -23,7 +24,10 @@ class Robot:
         if len(args) > 0:
             newArgs = [int(self.robotId)]
             for arg in args:
-                newArgs.append(arg)
+                if type(arg) is int:
+                    newArgs.append(arg)
+                else:
+                    raise TypeError(str(arg) + " is not a valid input")
             ans = self.mc.conn.sendReceive_flat("robot.inspect", floorFlatten(newArgs))
         else:
             ans = self.mc.conn.sendReceive("robot.inspect", self.robotId)
@@ -31,8 +35,11 @@ class Robot:
 
     def turn(self, angle):
         """Compass turn of robot (turn:float/int) in degrees: 0=south, 90=west, 180=north, 270=west"""
-        self.mc.conn.send("robot.turn", self.robotId, angle)
-        self.delay()
+        if type(angle) is int:
+            self.mc.conn.send("robot.turn", self.robotId, angle)
+            self.delay()
+        else:
+            raise TypeError(str(angle) + " is not a valid input")
 
     def delay(self):
         if self.delayTime > 0:
@@ -47,33 +54,49 @@ class Robot:
         self.turn(90)
         
     def setFacing(self, dir):
-        if type(dir) is int:
+        if type(dir) is facing.Facing:
+            self.mc.conn.send("robot.face", self.robotId, dir.id)
+        elif type(dir) is int:
             self.mc.conn.send("robot.face", self.robotId, facing.fromId(dir).id)
-        if type(dir) is str:
+        elif type(dir) is str:
             if len(dir) == 1:
                 self.mc.conn.send("robot.face", self.robotId, facing.fromLetter(dir).id)
             else:
                 self.mc.conn.send("robot.face", self.robotId, facing.fromName(dir).id)
+        else:
+            raise TypeError(str(dir) + " is not a valid input")
         self.delay()
 
     def forward(self, distance=1):
         """Move robot forward (distance: float)"""
-        self.mc.conn.sendReceive("robot.forward", self.robotId, distance)
+        if type(distance) is int:
+            self.mc.conn.sendReceive("robot.forward", self.robotId, distance)
+        else:
+            raise TypeError(str(distance) + " is not a valid input")
 
     def climb(self, distance=1):
         """Move robot climb (distance: float)"""
-        self.mc.conn.sendReceive("robot.climb", self.robotId, distance)
+        if type(distance) is int:
+            self.mc.conn.sendReceive("robot.climb", self.robotId, distance)
+        else:
+            raise TypeError(str(distance) + " is not a valid input")
         
     def descend(self, distance=1):
         """Move robot climb (distance: float)"""
-        self.mc.conn.sendReceive("robot.descend", self.robotId, distance)
+        if type(distance) is int:
+            self.mc.conn.sendReceive("robot.descend", self.robotId, distance)
+        else:
+            raise TypeError(str(distance) + " is not a valid input")
 
     def placeBlock(self, *args):
-        """Place block (id,[data]), can be empty so robot uses inventory"""
+        """Place block in front of robot, else within 1x1x1 range of robot (x,y,z), robot uses inventory"""
         if len(args) > 0:
             newArgs = [int(self.robotId)]
             for arg in args:
-                newArgs.append(arg)
+                if type(arg) is int:
+                    newArgs.append(arg)
+                else:
+                    raise TypeError(str(arg) + " is not a valid input")
             self.mc.conn.sendReceive_flat("robot.place", floorFlatten(newArgs))
         else:
             self.mc.conn.sendReceive("robot.place", self.robotId)
@@ -84,7 +107,10 @@ class Robot:
         if len(args) > 0:
             newArgs = [int(self.robotId)]
             for arg in args:
-                newArgs.append(arg)
+                if type(arg) is int:
+                    newArgs.append(arg)
+                else:
+                    raise TypeError(str(arg) + " is not a valid input")
             self.mc.conn.sendReceive_flat("robot.break", floorFlatten(newArgs))
         else:
             self.mc.conn.sendReceive("robot.break", self.robotId)
@@ -92,7 +118,8 @@ class Robot:
 
     def backward(self, distance=1):
         """Move robot backwards, will change heading"""
-        self.mc.conn.sendReceive("robot.backward", self.robotId, distance)
+        if type(distance) is int:
+            self.mc.conn.sendReceive("robot.backward", self.robotId, distance)
         
     def say(self, phrase):
         """Have the robot speak"""
@@ -103,9 +130,18 @@ class Robot:
         """Make robot jump"""
         self.mc.conn.sendReceive("robot.jump", self.robotId)
         
-    def interact(self): 
+    def interact(self, *args): 
         """Have the robot interact with the environment"""
-        self.mc.conn.send("robot.interact", self.robotId)
+        if len(args) > 0:
+            newArgs = [int(self.robotId)]
+            for arg in args:
+                if type(arg) is int:
+                    newArgs.append(arg)
+                else:
+                    raise TypeError(str(arg) + " is not a valid input")
+            self.mc.conn.sendReceive_flat("robot.interact", floorFlatten(newArgs))
+        else:
+            self.mc.conn.send("robot.interact", self.robotId)
         self.delay()
     
     def getDirection(self):
