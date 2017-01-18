@@ -428,9 +428,9 @@ public class APIRegistry {
 			}
 		}
 
-		protected static void fail(String string) {
-			System.err.println("Error: " + string);
-			sendLine("Fail");
+		protected static void fail(String error) {
+			RaspberryJamMod.logger.info("Code Error: " + error);
+			sendLine("FAIL|" + error);
 		}
 
 		protected static Location getBlockLocation(Scanner scan) {
