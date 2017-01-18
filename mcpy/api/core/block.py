@@ -50,12 +50,12 @@ class Block:
                 
     def getName(self):
         try:
-            return Block.idToBlockName[self][0:4]
+            return Block.idToBlockName[self]
         except:
             try:
-                return Block.idToBlockName[Block(self.id)][0:4]
+                return Block.idToBlockName[Block(self.id)]
             except:
-                return Block.idToBlockName[Block(1)][0:4]
+                return Block.idToBlockName[Block(1)]
                 
     def getMaterial(self):
         entry = None
@@ -83,10 +83,13 @@ class Block:
 
     def __repr__(self):
         if self.nbt is None:
-            return "Block(%d, %d)"%(self.id, self.data)
+            return self.getName() + " Block(%d, %d)"%(self.id, self.data)
         else:
-            return "Block(%d, %d, %s)"%(self.id, self.data, repr(self.nbt))
+            return self.getName() + " Block(%d, %d, %s)"%(self.id, self.data, repr(self.nbt))
 
+    def __str__(self):
+        return self.getName()
+    
     @staticmethod
     def byName(name, default=None):
         components = re.split('[\s,:]+', name.strip().replace(".id", "").upper(), maxsplit=3)
