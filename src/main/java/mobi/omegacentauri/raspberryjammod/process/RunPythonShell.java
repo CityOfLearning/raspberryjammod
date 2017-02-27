@@ -132,7 +132,10 @@ public class RunPythonShell {
 									}
 									lineNum = "";
 									codeLine = "";
-									// only report the first error
+									//kill the script if it hasnt been already
+									if ((runningScript != null) && isProcessAlive(runningScript)) {
+										runningScript.destroy();
+									}
 									break;
 								} else if (!line.contains("<stdin>") && !line.trim().equals("^")) {
 									codeLine = line;
