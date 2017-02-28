@@ -45,6 +45,19 @@ class Robot:
         if self.delayTime > 0:
             time.sleep(self.delayTime)
 
+     def detect(self):
+        """Detect entities within a range of the robot"""
+        ans = self.conn.sendReceive("robot.detect", self.robotId)
+        entities = []
+        for x in ans.split("%"):
+            val = x.split("|")
+            entities.append(Entity(val[0], val[1])
+        return entities
+        
+    def attack(self, enemyId):
+        """Attack Entity of the respective ID"""
+        ans = self.conn.sendReceive("robot.attack", self.robotId, enemyId)
+            
     def left(self):
         """Turn counterclockwise relative to compass heading"""
         self.turn(-90)
