@@ -1,6 +1,6 @@
 class Entity:
     """Minecraft PI block description. Can be sent to Minecraft.setBlock/s"""
-    
+
     def __init__(self, id, name, nbt=None):
         self.id = id
         self.name = name
@@ -22,17 +22,17 @@ class Entity:
         h = (self.id << 8) + self.name
         if self.nbt is not None:
             h ^= hash(self.nbt)
-                
+
     def getName(self):
         return self.name
-                
+
     def __iter__(self):
         """Allows a Block to be sent whenever id [and name] is needed"""
         if self.nbt is not None:
            return iter((self.id, self.name, self.nbt))
         else:
            return iter((self.id, self.name))
-           
+
     def __hash__(self):
         return hash((self.id, self.name, self.nbt))
 
