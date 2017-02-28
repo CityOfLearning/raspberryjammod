@@ -23,7 +23,7 @@ class RequestError(Exception):
 
 class Connection:
     """Connection to a Minecraft Pi game"""
-    RequestFailed = "FAIL|"
+    RequestFailed = "Fail"
 
     def __init__(self, address=None, port=None):
         self.windows = (platform.system() == "Windows" or platform.system().startswith("CYGWIN_NT"))
@@ -131,8 +131,8 @@ class Connection:
     def receive(self):
         """Receives data. Note that the trailing newline '\n' is trimmed"""
         s = self.readFile.readline().rstrip("\n")
-        if Connection.RequestFailed in s:
-            raise RequestError(s[5:])
+        if s == Connection.RequestFailed:
+            raise RequestError("%s failed"%self.lastSent.strip())
         return s
 
     def sendReceive(self, *data):
