@@ -18,6 +18,7 @@ import mobi.omegacentauri.raspberryjammod.actions.SetBlocksNBT;
 import mobi.omegacentauri.raspberryjammod.actions.SetBlocksState;
 import mobi.omegacentauri.raspberryjammod.events.MCEventHandler;
 import mobi.omegacentauri.raspberryjammod.network.CodeEvent;
+import mobi.omegacentauri.raspberryjammod.network.SocketEvent;
 import mobi.omegacentauri.raspberryjammod.util.Location;
 import mobi.omegacentauri.raspberryjammod.util.SetDimension;
 import mobi.omegacentauri.raspberryjammod.util.Vec3w;
@@ -542,7 +543,7 @@ public class APIRegistry {
 				sendLine("handshake");
 			});
 			APIRegistry.registerCommand(CLOSESOCKET, (String args, Scanner scan, MCEventHandler eventHandler) -> {
-				RaspberryJamMod.EVENT_BUS.post(new CodeEvent.SocketCloseEvent(havePlayer ? playerMP : null));
+				RaspberryJamMod.EVENT_BUS.post(new SocketEvent.Close(havePlayer ? playerMP : null));
 				sendLine("Closing Socket");
 			});
 			APIRegistry.registerCommand(SETBLOCK, (String args, Scanner scan, MCEventHandler eventHandler) -> {
