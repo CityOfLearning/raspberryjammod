@@ -1,5 +1,6 @@
 from ..core import minecraft as minecraft
 from ..core import block as block
+from ..core import entity as entity
 from ..core import facing as facing
 from ..core.vec3 import Vec3
 from ..core.util import flatten, floorFlatten
@@ -51,7 +52,7 @@ class Robot:
         entities = []
         for x in ans.split("%"):
             val = x.split("|")
-            entities.append(Entity(val[0], val[1]))
+            entities.append(entity.Entity(int(val[1]), val[0]))
         return entities
 
     def attack(self, enemyId):

@@ -40,7 +40,7 @@ class Entity:
         if self.nbt is None:
             return "Entity(%d, %s)"%(self.id, self.name)
         else:
-            return "Block(%d, %s, %s)"%(self.id, self.name, repr(self.nbt))
+            return "Entity(%d, %s, %s)"%(self.id, self.name, repr(self.nbt))
 
 
 ITEM = Entity(1, "Item")
