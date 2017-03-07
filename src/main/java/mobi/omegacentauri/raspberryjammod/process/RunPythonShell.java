@@ -132,7 +132,7 @@ public class RunPythonShell {
 									}
 									lineNum = "";
 									codeLine = "";
-									//kill the script if it hasnt been already
+									// kill the script if it hasnt been already
 									if ((runningScript != null) && isProcessAlive(runningScript)) {
 										runningScript.destroy();
 									}

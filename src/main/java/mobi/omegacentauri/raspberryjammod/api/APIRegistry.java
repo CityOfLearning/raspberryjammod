@@ -17,7 +17,6 @@ import mobi.omegacentauri.raspberryjammod.actions.SetBlockStateWithId;
 import mobi.omegacentauri.raspberryjammod.actions.SetBlocksNBT;
 import mobi.omegacentauri.raspberryjammod.actions.SetBlocksState;
 import mobi.omegacentauri.raspberryjammod.events.MCEventHandler;
-import mobi.omegacentauri.raspberryjammod.network.CodeEvent;
 import mobi.omegacentauri.raspberryjammod.network.SocketEvent;
 import mobi.omegacentauri.raspberryjammod.util.Location;
 import mobi.omegacentauri.raspberryjammod.util.SetDimension;

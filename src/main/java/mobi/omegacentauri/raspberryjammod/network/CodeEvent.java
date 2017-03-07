@@ -4,22 +4,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
 public class CodeEvent extends Event {
-	private final EntityPlayer player;
-	private final String code;
-
-	CodeEvent(EntityPlayer player, String code){
-		this.code = code;
-		this.player = player;
-	}
-	
-	public String getCode() {
-		return code;
-	}
-	
-	public EntityPlayer getPlayer() {
-		return player;
-	}
-	
 	public static class ErrorEvent extends CodeEvent {
 		private final String error;
 		private final int line;
@@ -28,7 +12,7 @@ public class CodeEvent extends Event {
 			super(player, code);
 			this.error = error;
 			this.line = line;
-			
+
 		}
 
 		public String getError() {
@@ -79,6 +63,23 @@ public class CodeEvent extends Event {
 		public int getId() {
 			return id;
 		}
+	}
+
+	private final EntityPlayer player;
+
+	private final String code;
+
+	CodeEvent(EntityPlayer player, String code) {
+		this.code = code;
+		this.player = player;
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public EntityPlayer getPlayer() {
+		return player;
 	}
 
 }
