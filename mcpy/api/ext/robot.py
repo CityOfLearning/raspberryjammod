@@ -55,9 +55,14 @@ class Robot:
             entities.append(entity.Entity(int(val[1]), val[0]))
         return entities
 
-    def attack(self, enemyId):
+    def attack(self, enemy):
         """Attack Entity of the respective ID"""
-        ans = self.mc.conn.sendReceive("robot.attack", self.robotId, enemyId)
+        if type(enemy) is entity.Entity:
+            ans = self.mc.conn.sendReceive("robot.attack", self.robotId, enemy.getEntityId())
+        elif type(enemy) is int:
+            ans = self.mc.conn.sendReceive("robot.attack", self.robotId, enemy)
+        else:
+            raise TypeError(str(enemy) + " is not a valid input")
             
     def left(self):
         """Turn counterclockwise relative to compass heading"""

@@ -1,9 +1,10 @@
 class Entity:
     """Minecraft PI block description. Can be sent to Minecraft.setBlock/s"""
 
-    def __init__(self, id, name, nbt=None):
+    def __init__(self, instance_id, name, id=0, nbt=None):
         self.id = id
         self.name = name
+        self.instance_id = instance_id
         if nbt is not None and len(nbt)==0:
             self.nbt = None
         else:
@@ -25,22 +26,28 @@ class Entity:
 
     def getName(self):
         return self.name
+        
+    def getId(self):
+        return self.id
+        
+    def getEntityId(self):
+        return self.instance_id
 
     def __iter__(self):
-        """Allows a Block to be sent whenever id [and name] is needed"""
+        """Allows a Entity to be sent whenever id [and name] is needed"""
         if self.nbt is not None:
-           return iter((self.id, self.name, self.nbt))
+           return iter((self.instance_id, self.id, self.name, self.nbt))
         else:
-           return iter((self.id, self.name))
+           return iter((self.instance_id, self.id, self.name))
 
     def __hash__(self):
-        return hash((self.id, self.name, self.nbt))
+        return hash((self.instance_id, self.id, self.name, self.nbt))
 
     def __repr__(self):
         if self.nbt is None:
-            return "Entity(%d, %s)"%(self.id, self.name)
+            return "Entity(%d, %d, %s)"%(self.instance_id, self.id, self.name)
         else:
-            return "Entity(%d, %s, %s)"%(self.id, self.name, repr(self.nbt))
+            return "Entity(%d, %d, %s, %s)"%(self.instance_id, self.id, self.name, repr(self.nbt))
 
 
 ITEM = Entity(1, "Item")
