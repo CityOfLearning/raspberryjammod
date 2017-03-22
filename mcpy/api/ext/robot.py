@@ -46,6 +46,9 @@ class Robot:
         if self.delayTime > 0:
             time.sleep(self.delayTime)
 
+    def buildSchematic(self):
+        self.mc.conn.sendReceive("robot.schematic", self.robotId)
+
     def detect(self):
         """Detect entities within a range of the robot"""
         ans = self.mc.conn.sendReceive("robot.detect", self.robotId)
