@@ -20,6 +20,9 @@ class Robot:
         """Initialize the Robot"""
         self.robotId = self.mc.conn.sendReceive("robot.id")
 
+    def buildSchematic(self):
+        self.mc.conn.sendReceive("robot.schematic", self.robotId)
+        
     def inspect(self, *args):
         """Get block with data (x,y,z) => Block"""
         if len(args) > 0:
@@ -45,9 +48,6 @@ class Robot:
     def delay(self):
         if self.delayTime > 0:
             time.sleep(self.delayTime)
-
-    def buildSchematic(self):
-        self.mc.conn.sendReceive("robot.schematic", self.robotId)
 
     def detect(self):
         """Detect entities within a range of the robot"""
@@ -75,7 +75,7 @@ class Robot:
         """Turn clockwise relative to compass heading"""
         self.turn(90)
         
-    def setFacing(self, dir):
+    def face(self, dir):
         if type(dir) is facing.Facing:
             self.mc.conn.send("robot.face", self.robotId, dir.id)
         elif type(dir) is int:
@@ -110,7 +110,7 @@ class Robot:
         else:
             raise TypeError(str(distance) + " is not a valid input")
 
-    def placeBlock(self, *args):
+    def place(self, *args):
         """Place block in front of robot, else within 1x1x1 range of robot (x,y,z), robot uses inventory"""
         if len(args) > 0:
             newArgs = [int(self.robotId)]
@@ -124,7 +124,7 @@ class Robot:
             self.mc.conn.sendReceive("robot.place", self.robotId)
         self.delay()
 
-    def breakBlock(self, *args):
+    def mine(self, *args):
         """Breaks block in front of robot, else within 1x1x1 range of robot (x,y,z)"""
         if len(args) > 0:
             newArgs = [int(self.robotId)]
