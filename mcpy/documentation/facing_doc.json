@@ -1,0 +1,18 @@
+{
+    "functions": [{
+        "package": "facing.fromId",
+        "short": "Get the Facing from integer ID",
+        "argument_list": "fromId(int id)",
+        "description": "Gets the associated facing based on the id\n\nValues:\n0 - Down\n1 - Up\n2 - North\n3 - South\n4 - West\n5 - East\n"
+    }, {
+        "package": "facing.fromName",
+        "short": "Get the Facing from its Name",
+        "argument_list": "fromName(str name)",
+        "description": "Gets the associated facing based on the name, should be lower case"
+    }, {
+        "package": "facing.fromLetter",
+        "short": "Get the Facing from its first letter",
+        "argument_list": "fromLetter(str letter)",
+        "description": "Gets the associated facing based on the first letter of the name, should be lower case"
+    }]
+}
