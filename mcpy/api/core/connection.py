@@ -132,7 +132,7 @@ class Connection:
         """Receives data. Note that the trailing newline '\n' is trimmed"""
         s = self.readFile.readline().rstrip("\n")
         if Connection.RequestFailed in s:
-            raise RequestError("%s failed"%self.lastSent.strip())
+            raise RequestError(s[5:])
         return s
 
     def sendReceive(self, *data):
