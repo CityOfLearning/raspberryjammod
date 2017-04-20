@@ -10,7 +10,7 @@ class Robot:
 
     def __init__(self):
         self.mc = minecraft.Minecraft()
-        self.robotId = self.mc.conn.sendReceive("robot.id")
+        self.robotId = self.mc.conn.sendReceive("robot.id", self.mc.playerId)
         self.delayTime = 0.1
 
     def __str__(self):
@@ -18,7 +18,7 @@ class Robot:
         
     def robot(self):
         """Initialize the Robot"""
-        self.robotId = self.mc.conn.sendReceive("robot.id")
+        self.robotId = self.mc.conn.sendReceive("robot.id", self.mc.playerId)
 
     def buildSchematic(self):
         self.mc.conn.sendReceive("robot.schematic", self.robotId)
