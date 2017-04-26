@@ -169,24 +169,30 @@ class CmdPlayer(CmdPositioner):
         return CmdPositioner.getNameAndUUID(self, self.id)
 
 class CmdCamera:
-    def __init__(self, connection):
+    def __init__(self, connection, playerId=(), name=None):
+        if name is not None:
+            playerId = ()
+        if name is not None:
+            self.id = name
+        else:
+            self.id = playerId
         self.conn = connection
 
     def setNormal(self, *args):
         """Set camera mode to normal Minecraft view ([entityId])"""
-        self.conn.send("camera.mode.setNormal", args)
+        self.conn.send("camera.mode.setNormal", self.id, args)
 
     def setFixed(self):
         """Set camera mode to fixed view"""
-        self.conn.send("camera.mode.setFixed")
+        self.conn.send("camera.mode.setFixed", self.id)
 
     def setFollow(self, *args):
         """Set camera mode to follow an entity ([entityId])"""
-        self.conn.send("camera.mode.setFollow", args)
+        self.conn.send("camera.mode.setFollow", self.id, args)
 
     def setPos(self, *args):
         """Set camera entity position (x,y,z)"""
-        self.conn.send("camera.setPos", args)
+        self.conn.send("camera.setPos", self.id, args)
 
 
 class CmdEvents:

@@ -175,9 +175,6 @@ public class APIRegistry {
 		protected static PrintWriter writer = null;
 
 		protected static boolean includeNBTWithData = false;
-		protected static boolean havePlayer;
-		protected static int playerId;
-		protected static EntityPlayerMP playerMP;
 		protected static List<HitDescription> hits = new LinkedList<>();
 		protected static List<ChatDescription> chats = new LinkedList<>();
 		private volatile static boolean restrictToSword = true;
@@ -497,9 +494,6 @@ public class APIRegistry {
 
 		protected static Entity getServerEntityByID(int id) {
 			if (!useClientMethods) {
-				if (id == playerId) {
-					return playerMP;
-				}
 				for (World w : serverWorlds) {
 					Entity e = w.getEntityByID(id);
 					if (e != null) {
@@ -542,7 +536,7 @@ public class APIRegistry {
 				sendLine("handshake");
 			});
 			APIRegistry.registerCommand(CLOSESOCKET, (String args, Scanner scan, MCEventHandler eventHandler) -> {
-				 // dont post socket closing messages with no player id attached
+				// dont post socket closing messages with no player id attached
 				if (scan.hasNextInt()) {
 					EntityPlayerMP player = (EntityPlayerMP) getServerEntityByID(scan.nextInt());
 					RaspberryJamMod.EVENT_BUS.post(new SocketEvent.Close(player));
@@ -719,8 +713,7 @@ public class APIRegistry {
 					}
 					fail("Unknown player");
 				} else {
-					// unofficial API to get current player ID
-					sendLine(playerId);
+					fail("Requires Player Name");
 				}
 			});
 			APIRegistry.registerCommand(WORLDDELETEENTITY, (String args, Scanner scan, MCEventHandler eventHandler) -> {
@@ -765,51 +758,51 @@ public class APIRegistry {
 			// player
 			APIRegistry.registerCommand("player." + GETPOS,
 					(String args, Scanner scan, MCEventHandler eventHandler) -> {
-						entityGetPos(playerId);
+						entityGetPos(scan.nextInt());
 					});
 			APIRegistry.registerCommand("player." + GETTILE,
 					(String args, Scanner scan, MCEventHandler eventHandler) -> {
-						entityGetTile(playerId);
+						entityGetTile(scan.nextInt());
 					});
 			APIRegistry.registerCommand("player." + GETROTATION,
 					(String args, Scanner scan, MCEventHandler eventHandler) -> {
-						entityGetRotation(playerId);
+						entityGetRotation(scan.nextInt());
 					});
 			APIRegistry.registerCommand("player." + SETROTATION,
 					(String args, Scanner scan, MCEventHandler eventHandler) -> {
-						entitySetRotation(playerId, scan.nextFloat());
+						entitySetRotation(scan.nextInt(), scan.nextFloat());
 					});
 			APIRegistry.registerCommand("player." + GETPITCH,
 					(String args, Scanner scan, MCEventHandler eventHandler) -> {
-						entityGetPitch(playerId);
+						entityGetPitch(scan.nextInt());
 					});
 			APIRegistry.registerCommand("player." + SETPITCH,
 					(String args, Scanner scan, MCEventHandler eventHandler) -> {
-						entitySetPitch(playerId, scan.nextFloat());
+						entitySetPitch(scan.nextInt(), scan.nextFloat());
 					});
 			APIRegistry.registerCommand("player." + GETDIRECTION,
 					(String args, Scanner scan, MCEventHandler eventHandler) -> {
-						entityGetDirection(playerId);
+						entityGetDirection(scan.nextInt());
 					});
 			APIRegistry.registerCommand("player." + SETDIRECTION,
 					(String args, Scanner scan, MCEventHandler eventHandler) -> {
-						entitySetDirection(playerId, scan);
+						entitySetDirection(scan.nextInt(), scan);
 					});
 			APIRegistry.registerCommand("player." + SETTILE,
 					(String args, Scanner scan, MCEventHandler eventHandler) -> {
-						entitySetTile(playerId, scan);
+						entitySetTile(scan.nextInt(), scan);
 					});
 			APIRegistry.registerCommand("player." + SETPOS,
 					(String args, Scanner scan, MCEventHandler eventHandler) -> {
-						entitySetPos(playerId, scan);
+						entitySetPos(scan.nextInt(), scan);
 					});
 			APIRegistry.registerCommand("player." + SETDIMENSION,
 					(String args, Scanner scan, MCEventHandler eventHandler) -> {
-						entitySetDimension(playerId, scan.nextInt(), eventHandler);
+						entitySetDimension(scan.nextInt(), scan.nextInt(), eventHandler);
 					});
 			APIRegistry.registerCommand("player." + GETNAME,
 					(String args, Scanner scan, MCEventHandler eventHandler) -> {
-						entityGetNameAndUUID(playerId);
+						entityGetNameAndUUID(scan.nextInt());
 					});
 
 			// entity
@@ -863,7 +856,9 @@ public class APIRegistry {
 					});
 			APIRegistry.registerCommand("camera." + GETENTITYID,
 					(String args, Scanner scan, MCEventHandler eventHandler) -> {
-						sendLine(playerMP.getSpectatingEntity().getEntityId());
+						int playerid = scan.nextInt();
+						EntityPlayerMP player = (EntityPlayerMP) getServerEntityByID(playerid);
+						sendLine(player.getSpectatingEntity().getEntityId());
 					});
 			APIRegistry.registerCommand("camera." + SETFOLLOW,
 					(String args, Scanner scan, MCEventHandler eventHandler) -> {
@@ -873,13 +868,16 @@ public class APIRegistry {
 
 						mc.gameSettings.debugCamEnable = false;
 
-						if (playerMP != null) {
+						int playerid = scan.nextInt();
+						EntityPlayerMP player = (EntityPlayerMP) getServerEntityByID(playerid);
+
+						if (player != null) {
 							if (!scan.hasNext()) {
-								playerMP.setSpectatingEntity(null);
+								player.setSpectatingEntity(null);
 							} else {
 								Entity entity = getServerEntityByID(scan.nextInt());
 								if (entity != null) {
-									playerMP.setSpectatingEntity(entity);
+									player.setSpectatingEntity(entity);
 								}
 							}
 						}
@@ -894,13 +892,16 @@ public class APIRegistry {
 
 						mc.gameSettings.debugCamEnable = false;
 
-						if (playerMP != null) {
+						int playerid = scan.nextInt();
+						EntityPlayerMP player = (EntityPlayerMP) getServerEntityByID(playerid);
+
+						if (player != null) {
 							if (!scan.hasNext()) {
-								playerMP.setSpectatingEntity(null);
+								player.setSpectatingEntity(null);
 							} else {
 								Entity entity = getServerEntityByID(scan.nextInt());
 								if (entity != null) {
-									playerMP.setSpectatingEntity(entity);
+									player.setSpectatingEntity(entity);
 								}
 							}
 						}
@@ -972,46 +973,6 @@ public class APIRegistry {
 					fail("Worlds not available");
 					return false;
 				}
-
-				if (!havePlayer) {
-					if (RaspberryJamMod.integrated) {
-						mc = Minecraft.getMinecraft();
-
-						if (mc == null) {
-							fail("Minecraft client not yet available");
-						}
-
-						if (mc.thePlayer == null) {
-							fail("Client player not available");
-							return false;
-						}
-						playerId = mc.thePlayer.getEntityId();
-						for (World w : serverWorlds) {
-							Entity e = w.getEntityByID(playerId);
-							if (e != null) {
-								playerMP = (EntityPlayerMP) e;
-							}
-						}
-					} else {
-						playerMP = null;
-						int firstId = 0;
-
-						for (World w : serverWorlds) {
-							for (EntityPlayer p : w.playerEntities) {
-								int id = p.getEntityId();
-								if ((playerMP == null) || (id < firstId)) {
-									firstId = id;
-									playerMP = (EntityPlayerMP) p;
-								}
-							}
-						}
-					}
-					if (playerMP == null) {
-						fail("Player not found");
-						return false;
-					}
-					havePlayer = true;
-				}
 				return true;
 			} else {
 				if (!RaspberryJamMod.integrated) {
@@ -1032,9 +993,6 @@ public class APIRegistry {
 					return false;
 				}
 
-				playerId = mc.thePlayer.getEntityId();
-				playerMP = null;
-				havePlayer = true;
 				return true;
 			}
 		}
