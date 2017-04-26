@@ -213,10 +213,6 @@ public class RunPythonShell {
 			boolean codeBlock = false;
 			int blockDepth = 0;
 			for (String lines : program) {
-				// if (!isProcessAlive(runningScript)) {
-				// writer.flush();
-				// break;
-				// }
 				if (codeBlock && ((lines.split(Pattern.quote("    ")).length - 1) < blockDepth)) {
 					for (int i = blockDepth - lines.split(Pattern.quote("    ")).length - 1; i > 0; i--) {
 						writer.newLine();

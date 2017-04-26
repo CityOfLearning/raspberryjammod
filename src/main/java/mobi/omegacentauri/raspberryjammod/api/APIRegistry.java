@@ -542,8 +542,12 @@ public class APIRegistry {
 				sendLine("handshake");
 			});
 			APIRegistry.registerCommand(CLOSESOCKET, (String args, Scanner scan, MCEventHandler eventHandler) -> {
-				RaspberryJamMod.EVENT_BUS.post(new SocketEvent.Close(havePlayer ? playerMP : null));
-				sendLine("Closing Socket");
+				 // dont post socket closing messages with no player id attached
+				if (scan.hasNextInt()) {
+					EntityPlayerMP player = (EntityPlayerMP) getServerEntityByID(scan.nextInt());
+					RaspberryJamMod.EVENT_BUS.post(new SocketEvent.Close(player));
+					sendLine("Closing Socket for Player: " + player.getName());
+				}
 			});
 			APIRegistry.registerCommand(SETBLOCK, (String args, Scanner scan, MCEventHandler eventHandler) -> {
 				Location pos = getBlockLocation(scan);
