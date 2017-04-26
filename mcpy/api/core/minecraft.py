@@ -262,13 +262,13 @@ class Minecraft:
 
 
     
-	def __del__(self):
-		try:
+    def __del__(self):
+        try:
             atexit.unregister(self.conn.close)
         except:
             pass 
-	
-	def spawnEntity(self, *args):
+    
+    def spawnEntity(self, *args):
         """Spawn entity (type,x,y,z,tags) and get its id => id:int"""
         return int(self.conn.sendReceive("world.spawnEntity", args))
 
