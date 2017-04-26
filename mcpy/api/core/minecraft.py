@@ -4,6 +4,7 @@ from .vec3 import Vec3
 from .event import BlockEvent,ChatEvent
 from .block import Block
 import math
+import atexit
 from os import environ
 from .util import flatten,floorFlatten
 try:
@@ -251,9 +252,17 @@ class Minecraft:
         
         self.events = CmdEvents(self.conn)
         self.enabledNBT = False
+        atexit.register(self.conn.close, self.playerId)
 
 
-    def spawnEntity(self, *args):
+    
+	def __del__(self):
+		try:
+            atexit.unregister(self.conn.close)
+        except:
+            pass 
+	
+	def spawnEntity(self, *args):
         """Spawn entity (type,x,y,z,tags) and get its id => id:int"""
         return int(self.conn.sendReceive("world.spawnEntity", args))
 

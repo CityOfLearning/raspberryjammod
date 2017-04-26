@@ -3,7 +3,6 @@ from __future__ import absolute_import
 import socket
 import select
 import sys
-import atexit
 import os
 import platform
 import base64
@@ -44,22 +43,18 @@ class Connection:
         self.socket.connect((address, port))
         self.readFile = self.socket.makefile("r")
         self.lastSent = ""
-        if self.windows:
-            atexit.register(self.close)
+            
 
     def __del__(self):
         if self.windows:
             self.close()
-            try:
-                atexit.unregister(self.close)
-            except:
-                pass   
 
-    def close(self):
+    def close(self, id=None):
         try:
-            if self.windows:
-                # ugly hack to block until all sending is completed
+            if(id == None):
                 self.sendReceive("mcpi.close")
+            else:
+                self.sendReceive("mcpi.close", id)
         except:
             pass
         try:
