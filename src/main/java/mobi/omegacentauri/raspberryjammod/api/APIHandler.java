@@ -110,7 +110,7 @@ public class APIHandler {
 			scan.close();
 			scan = null;
 		} catch (Exception e) {
-			RaspberryJamMod.logger.error("" + e);
+			RaspberryJamMod.logger.error("Error during processing" + e);
 			e.printStackTrace();
 		} finally {
 			if (scan != null) {

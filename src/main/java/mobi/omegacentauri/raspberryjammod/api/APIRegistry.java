@@ -38,6 +38,7 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.util.MathHelper;
 import net.minecraft.util.Vec3;
 import net.minecraft.util.Vec3i;
 import net.minecraft.world.World;
@@ -168,8 +169,6 @@ public class APIRegistry {
 
 		protected static World[] serverWorlds;
 
-		protected static boolean listening = true;
-
 		protected static Minecraft mc;
 
 		protected static PrintWriter writer = null;
@@ -231,7 +230,7 @@ public class APIRegistry {
 		protected static void entityGetPitch(int id) {
 			Entity e = getServerEntityByID(id);
 			if (e != null) {
-				sendLine(normalizeAngle(e.rotationPitch));
+				sendLine(MathHelper.wrapAngleTo180_float(e.rotationPitch));
 			}
 		}
 
@@ -263,7 +262,7 @@ public class APIRegistry {
 		protected static void entityGetRotation(int id) {
 			Entity e = getServerEntityByID(id);
 			if (e != null) {
-				sendLine(normalizeAngle(e.rotationYaw));
+				sendLine(MathHelper.wrapAngleTo180_float(e.rotationYaw));
 			}
 		}
 
@@ -937,17 +936,6 @@ public class APIRegistry {
 					});
 		}
 
-		protected static float normalizeAngle(float angle) {
-			angle = angle % 360;
-			if (angle <= -180) {
-				angle += 360;
-			}
-			if (angle > 180) {
-				angle -= 360;
-			}
-			return angle;
-		}
-
 		public static void onClick(PlayerInteractEvent event, MCEventHandler eventHandler) {
 			if ((event.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK)
 					|| (detectLeftClick && (event.action == PlayerInteractEvent.Action.LEFT_CLICK_BLOCK))) {
@@ -1004,8 +992,15 @@ public class APIRegistry {
 			}
 		}
 
-		protected static BlockPos rotateVector(BlockPos pos, float angle) {
-			return new BlockPos(new Vec3(pos).rotateYaw(angle));
+		protected static BlockPos rotateVectorAngle(BlockPos pos, float angle) {
+			angle = MathHelper.wrapAngleTo180_float(angle);
+			Vec3 rotated = new Vec3(pos.getX(), pos.getY(), pos.getZ()).rotateYaw((float) Math.toRadians(angle));
+			return new BlockPos(Math.round(rotated.xCoord), Math.round(rotated.yCoord), Math.round(rotated.zCoord));
+		}
+
+		protected static BlockPos rotateVectorRadian(BlockPos pos, float radian) {
+			Vec3 rotated = new Vec3(pos.getX(), pos.getY(), pos.getZ()).rotateYaw(radian);
+			return new BlockPos(Math.round(rotated.xCoord), Math.round(rotated.yCoord), Math.round(rotated.zCoord));
 		}
 
 		protected static void sendLine(BlockPos pos) {
@@ -1141,10 +1136,6 @@ public class APIRegistry {
 					}
 				}
 			}
-		}
-
-		protected static double sqVectorLength(BlockPos pos) {
-			return (pos.getX() * pos.getX()) + (pos.getY() * pos.getY()) + (pos.getZ() * pos.getZ());
 		}
 
 		public static int trunc(double x) {
