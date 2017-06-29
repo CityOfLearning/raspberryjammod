@@ -123,6 +123,7 @@ public class RunPythonShell {
 									// posts error to bus which is handled
 									// server side and
 									// translated to client
+									line = line.substring(line.lastIndexOf(".") + 1);
 									if (!isRobot) {
 										RaspberryJamMod.EVENT_BUS
 												.post(new CodeEvent.ErrorEvent(codeLine, line, lineLoc, entity));
