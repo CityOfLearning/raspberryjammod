@@ -53,7 +53,6 @@ public class APIHandler {
 	}
 
 	protected void fail(String string) {
-		System.err.println("Error: " + string);
 		APIRegistry.Python2MinecraftApi.sendLine("Fail");
 	}
 
@@ -69,8 +68,8 @@ public class APIHandler {
 		fail(String.format("Robot with id %d could not complete command: %s", event.getId(), event.getCode()));
 	}
 
-	public void onSuccess(CodeEvent.SuccessEvent event) {
-		APIRegistry.Python2MinecraftApi.sendLine(event.getId() + "," + event.getCode());
+	public void onSuccess(CodeEvent.RobotSuccessEvent event) {
+		APIRegistry.Python2MinecraftApi.sendLine(event.getEntityId() + "," + event.getCode());
 	}
 
 	public void process(String clientSentence) {

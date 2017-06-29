@@ -143,7 +143,7 @@ abstract public class MCEventHandler {
 	}
 
 	@SubscribeEvent
-	public void onSuccessEvent(CodeEvent.SuccessEvent event) {
+	public void onSuccessEvent(CodeEvent.RobotSuccessEvent event) {
 		for (APIHandler apiHandler : apiHandlers) {
 			apiHandler.onSuccess(event);
 		}

@@ -52,16 +52,24 @@ public class CodeEvent extends Event {
 
 	}
 
-	public static class SuccessEvent extends CodeEvent {
-		private final int id;
+	public static class RobotSuccessEvent extends SuccessEvent {
 
-		public SuccessEvent(String code, int id, EntityPlayer player) {
-			super(player, code);
-			this.id = id;
+		private final int entityId;
+
+		public RobotSuccessEvent(String code, int entityId, EntityPlayer player) {
+			super(code, player);
+			this.entityId = entityId;
 		}
 
-		public int getId() {
-			return id;
+		public int getEntityId() {
+			return entityId;
+		}
+
+	}
+
+	public static class SuccessEvent extends CodeEvent {
+		public SuccessEvent(String code, EntityPlayer player) {
+			super(player, code);
 		}
 	}
 
