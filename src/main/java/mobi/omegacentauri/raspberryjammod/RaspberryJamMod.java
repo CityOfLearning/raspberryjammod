@@ -44,7 +44,7 @@ public class RaspberryJamMod {
 	public static final String MODID = "raspberryjammod";
 	public static final String VERSION = "0.82";
 	public static final String NAME = "Raspberry Jam Mod";
-	public static final String DEPENDENCIES = "required-before:dyn;";
+	public static final String DEPENDENCIES = "before:dyn;";
 
 	public static ScriptExternalCommand[] scriptExternalCommands = null;
 
