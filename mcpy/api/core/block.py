@@ -83,9 +83,9 @@ class Block:
 
     def __repr__(self):
         if self.nbt is None:
-            return self.getName() + " Block(%d, %d)"%(self.id, self.data)
+            return self.getName() #+ " Block(%d, %d)"%(self.id, self.data)
         else:
-            return self.getName() + " Block(%d, %d, %s)"%(self.id, self.data, repr(self.nbt))
+            return self.getName() #+ " Block(%d, %d, %s)"%(self.id, self.data, repr(self.nbt))
 
     def __str__(self):
         return self.getName()

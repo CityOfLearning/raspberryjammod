@@ -9,10 +9,11 @@ from __future__ import print_function
 # This script only works on Raspberry Jam
 #
 
-import mcpi.minecraft as minecraft
+from api.core import minecraft as minecraft
+from api.core.vec3 import Vec3
+from api.core import block as block
 import time
 from math import *
-from mcpi.block import *
 import code
 import sys
 

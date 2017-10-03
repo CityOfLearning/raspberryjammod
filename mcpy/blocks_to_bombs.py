@@ -3,9 +3,8 @@ from __future__ import print_function
 #Raspberry Pi, Minecraft Bombs - Turn any block into a bomb!
 
 #import the minecraft.py module from the minecraft directory
-import mcpi.minecraft as minecraft
-#import minecraft block module
-import mcpi.block as block
+from api.core import minecraft as minecraft
+from api.core import block as block
 #import time, so delays can be used
 import time
 #import threading, so threads can be used
@@ -49,7 +48,7 @@ if __name__ == "__main__":
     time.sleep(5)
     #Connect to minecraft by creating the minecraft object
     # - minecraft needs to be running and in a game
-    mc = minecraft.Minecraft.create()
+    mc = minecraft.Minecraft()
 
     #Post a message to the minecraft chat window 
     mc.postToChat("Minecraft Bombs, Hit (Right Click) a Block, www.stuffaboutcode.com")

@@ -1,7 +1,8 @@
 from __future__ import print_function
 from time import time
-from mcpi.minecraft import Minecraft
-mc = Minecraft.create()
+from api.core import minecraft as minecraft
+
+mc = minecraft.Minecraft()
 t = time()
 for i in range(1000):
     mc.getBlock(0,0,0)
