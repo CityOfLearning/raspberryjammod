@@ -18,7 +18,6 @@ import mobi.omegacentauri.raspberryjammod.network.SocketEvent;
 import mobi.omegacentauri.raspberryjammod.util.Location;
 import mobi.omegacentauri.raspberryjammod.util.SetDimension;
 import mobi.omegacentauri.raspberryjammod.util.Vec3w;
-
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
@@ -31,11 +30,10 @@ import net.minecraft.item.ItemSword;
 import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.nbt.NBTException;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumParticleTypes;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.Vec3;
 import net.minecraft.util.Vec3i;
@@ -64,8 +62,8 @@ public class Python2MinecraftApi {
 		public HitDescription(World[] worlds, PlayerInteractEvent event) {
 			Vec3i pos = Location.encodeVec3i(worlds, event.entityPlayer.getEntityWorld(), event.pos.getX(),
 					event.pos.getY(), event.pos.getZ());
-			description = "" + pos.getX() + "," + pos.getY() + "," + pos.getZ() + "," + numericFace(event.face)
-					+ "," + event.entity.getEntityId();
+			description = "" + pos.getX() + "," + pos.getY() + "," + pos.getZ() + "," + numericFace(event.face) + ","
+					+ event.entity.getEntityId();
 		}
 
 		public String getDescription() {
@@ -92,71 +90,9 @@ public class Python2MinecraftApi {
 		}
 	}
 
-	// world.checkpoint.save/restore, player.setting,
-	// world.setting(nametags_visible,*),
-	// camera.setFixed() unsupported
-	// camera.setNormal(id) and camera.setFollow(id) uses spectating, and so
-	// it
-	// moves the
-	// player along with the entity that was set as camera
-	protected static final String AUTHENTICATE = "mcpi.auth";
-	protected static final String CLOSESOCKET = "mcpi.close";
-
-	protected static final String CHAT = "chat.post";
-	protected static final String SETBLOCK = "world.setBlock";
-	protected static final String SETBLOCKS = "world.setBlocks";
-	protected static final String GETBLOCK = "world.getBlock";
-	protected static final String GETBLOCKWITHDATA = "world.getBlockWithData";
-	protected static final String GETBLOCKS = "world.getBlocks";
-	protected static final String GETBLOCKSWITHDATA = "world.getBlocksWithData";
-	protected static final String GETHEIGHT = "world.getHeight";
-	protected static final String WORLDSPAWNENTITY = "world.spawnEntity";
-	protected static final String WORLDSPAWNPARTICLE = "world.spawnParticle";
-	protected static final String WORLDDELETEENTITY = "world.removeEntity";
-	protected static final String WORLDGETPLAYERIDS = "world.getPlayerIds";
-
-	protected static final String WORLDGETPLAYERID = "world.getPlayerId";
-	protected static final String WORLDSETTING = "world.setting";
-
-	// EXPERIMENTAL AND UNSUPPORTED
-	protected static final String GETLIGHTLEVEL = "block.getLightLevel";
-	protected static final String SETLIGHTLEVEL = "block.setLightLevel";
-
-	protected static final String EVENTSBLOCKHITS = "events.block.hits";
-	protected static final String EVENTSCHATPOSTS = "events.chat.posts";
-
-	protected static final String EVENTSCLEAR = "events.clear";
-	protected static final String EVENTSSETTING = "events.setting";
-	// camera.*
-	protected static final String SETFOLLOW = "setFollow";
-	protected static final String SETNORMAL = "setNormal";
-	protected static final String GETENTITYID = "getEntityId";
-
-	// EXPERIMENTAL AND UNSUPPORTED
-	protected static final String SETDEBUG = "setDebug";
-	protected static final String SETDISTANCE = "setDistance";
-
-	// player.* or entity.*
-	protected static final String GETDIRECTION = "getDirection";
-	protected static final String GETPITCH = "getPitch";
-	protected static final String GETPOS = "getPos";
-	protected static final String GETROTATION = "getRotation";
-	protected static final String GETTILE = "getTile";
-
-	// EXPERIMENTAL AND UNSUPPORTED
-	protected static final String SETDIMENSION = "setDimension";
-
-	protected static final String SETDIRECTION = "setDirection";
-	protected static final String SETPITCH = "setPitch";
-	protected static final String SETPOS = "setPos";
-	protected static final String SETROTATION = "setRotation";
-
-	protected static final String SETTILE = "setTile";
-
-	protected static final String GETNAME = "getNameAndUUID";
-	protected static final float TOO_SMALL = (float) 1e-9;
-	protected static final int MAX_CHATS = 512;
-	protected static final int MAX_HITS = 512;
+	private static final int MAX_CHATS = 512;
+	private static final float TOO_SMALL = (float) 1e-9;
+	private static final int MAX_HITS = 512;
 
 	protected static boolean useClientMethods = false;
 
@@ -167,10 +103,73 @@ public class Python2MinecraftApi {
 	protected static PrintWriter writer = null;
 
 	protected static boolean includeNBTWithData = false;
-	protected static List<HitDescription> hits = new LinkedList<>();
-	protected static List<ChatDescription> chats = new LinkedList<>();
+	private static List<HitDescription> hits = new LinkedList<>();
+	private static List<ChatDescription> chats = new LinkedList<>();
 	private volatile static boolean restrictToSword = true;
 	private volatile static boolean detectLeftClick = RaspberryJamMod.leftClickToo;
+
+	// world.checkpoint.save/restore, player.setting,
+	// world.setting(nametags_visible,*),
+	// camera.setFixed() unsupported
+	// camera.setNormal(id) and camera.setFollow(id) uses spectating, and so
+	// it
+	// moves the
+	// player along with the entity that was set as camera
+	private static final String AUTHENTICATE = "mcpi.auth";
+	private static final String CLOSESOCKET = "mcpi.close";
+
+	private static final String CHAT = "chat.post";
+	private static final String SETBLOCK = "world.setBlock";
+	private static final String SETBLOCKS = "world.setBlocks";
+	private static final String GETBLOCK = "world.getBlock";
+	private static final String GETBLOCKWITHDATA = "world.getBlockWithData";
+	private static final String GETBLOCKS = "world.getBlocks";
+	private static final String GETBLOCKSWITHDATA = "world.getBlocksWithData";
+	private static final String GETHEIGHT = "world.getHeight";
+	private static final String WORLDSPAWNENTITY = "world.spawnEntity";
+	private static final String WORLDSPAWNPARTICLE = "world.spawnParticle";
+	private static final String WORLDDELETEENTITY = "world.removeEntity";
+	private static final String WORLDGETPLAYERIDS = "world.getPlayerIds";
+
+	private static final String WORLDGETPLAYERID = "world.getPlayerId";
+	private static final String WORLDSETTING = "world.setting";
+
+	// EXPERIMENTAL AND UNSUPPORTED
+	private static final String GETLIGHTLEVEL = "block.getLightLevel";
+	private static final String SETLIGHTLEVEL = "block.setLightLevel";
+
+	private static final String EVENTSBLOCKHITS = "events.block.hits";
+	private static final String EVENTSCHATPOSTS = "events.chat.posts";
+
+	private static final String EVENTSCLEAR = "events.clear";
+	private static final String EVENTSSETTING = "events.setting";
+	// camera.*
+	private static final String SETFOLLOW = "setFollow";
+	private static final String SETNORMAL = "setNormal";
+	private static final String GETENTITYID = "getEntityId";
+
+	// EXPERIMENTAL AND UNSUPPORTED
+	private static final String SETDEBUG = "setDebug";
+	private static final String SETDISTANCE = "setDistance";
+
+	// player.* or entity.*
+	private static final String GETDIRECTION = "getDirection";
+	private static final String GETPITCH = "getPitch";
+	private static final String GETPOS = "getPos";
+	private static final String GETROTATION = "getRotation";
+	private static final String GETTILE = "getTile";
+
+	// EXPERIMENTAL AND UNSUPPORTED
+	private static final String SETDIMENSION = "setDimension";
+
+	private static final String SETDIRECTION = "setDirection";
+	private static final String SETPITCH = "setPitch";
+	private static final String SETPOS = "setPos";
+	private static final String SETROTATION = "setRotation";
+
+	private static final String SETTILE = "setTile";
+
+	private static final String GETNAME = "getNameAndUUID";
 
 	public static void addChatDescription(ChatDescription cd) {
 		synchronized (Python2MinecraftApi.chats) {
@@ -181,9 +180,8 @@ public class Python2MinecraftApi {
 		}
 	}
 
-	protected static void chat(String msg) {
-		if (!RaspberryJamMod.integrated
-				|| (RaspberryJamMod.globalChatMessages && !Python2MinecraftApi.useClientMethods)) {
+	public static void chat(String msg) {
+		if (!RaspberryJamMod.integrated || (RaspberryJamMod.globalChatMessages && !Python2MinecraftApi.useClientMethods)) {
 			Python2MinecraftApi.globalMessage(msg);
 		} else {
 			Python2MinecraftApi.mc.pointedEntity.addChatMessage(new ChatComponentText(msg));
@@ -282,8 +280,8 @@ public class Python2MinecraftApi {
 			}
 
 			Vec3 pos = Location.encodeVec3(Python2MinecraftApi.serverWorlds, w, e.getPositionVector());
-			Python2MinecraftApi.sendLine("" + Python2MinecraftApi.trunc(pos.xCoord) + "," + Python2MinecraftApi.trunc(pos.yCoord)
-					+ "," + Python2MinecraftApi.trunc(pos.zCoord));
+			Python2MinecraftApi.sendLine(
+					"" + Python2MinecraftApi.trunc(pos.xCoord) + "," + Python2MinecraftApi.trunc(pos.yCoord) + "," + Python2MinecraftApi.trunc(pos.zCoord));
 		}
 	}
 
@@ -419,7 +417,7 @@ public class Python2MinecraftApi {
 		}
 	}
 
-	protected static void fail(String error) {
+	public static void fail(String error) {
 		RaspberryJamMod.logger.info("Code Error: " + error);
 		Python2MinecraftApi.sendLine("FAIL|" + error);
 	}
@@ -491,6 +489,9 @@ public class Python2MinecraftApi {
 			for (World w : Python2MinecraftApi.serverWorlds) {
 				Entity e = w.getEntityByID(id);
 				if (e != null) {
+					if (e.isDead) {
+						Python2MinecraftApi.fail("Entity is dead");
+					}
 					return e;
 				}
 			}
@@ -500,6 +501,9 @@ public class Python2MinecraftApi {
 			Entity e = Python2MinecraftApi.mc.theWorld.getEntityByID(id);
 			if (e == null) {
 				Python2MinecraftApi.fail("Cannot find entity " + id);
+			}
+			if (e.isDead) {
+				Python2MinecraftApi.fail("Entity is dead");
 			}
 			return e;
 		}
@@ -526,83 +530,75 @@ public class Python2MinecraftApi {
 	}
 
 	public static void init() {
-		APIRegistry.registerCommand(Python2MinecraftApi.AUTHENTICATE,
-				(String args, Scanner scan, MCEventHandler eventHandler) -> {
-					Python2MinecraftApi.sendLine("handshake");
-				});
-		APIRegistry.registerCommand(Python2MinecraftApi.CLOSESOCKET,
-				(String args, Scanner scan, MCEventHandler eventHandler) -> {
-					// dont post socket closing messages with no player id attached
-					if (scan.hasNextInt()) {
-						EntityPlayerMP player = (EntityPlayerMP) Python2MinecraftApi
-								.getServerEntityByID(scan.nextInt());
-						MinecraftForge.EVENT_BUS.post(new SocketEvent.Close(player));
-						Python2MinecraftApi.sendLine("Closing Socket for Player: " + player.getName());
-					}
-				});
-		APIRegistry.registerCommand(Python2MinecraftApi.SETBLOCK,
-				(String args, Scanner scan, MCEventHandler eventHandler) -> {
-					Location pos = Python2MinecraftApi.getBlockLocation(scan);
-					short id = scan.nextShort();
-					short meta = scan.hasNextShort() ? scan.nextShort() : 0;
-					String tagString = Python2MinecraftApi.getRest(scan);
+		APIRegistry.registerCommand(Python2MinecraftApi.AUTHENTICATE, (String args, Scanner scan, MCEventHandler eventHandler) -> {
+			Python2MinecraftApi.sendLine("handshake");
+		});
+		APIRegistry.registerCommand(Python2MinecraftApi.CLOSESOCKET, (String args, Scanner scan, MCEventHandler eventHandler) -> {
+			// dont post socket closing messages with no player id attached
+			if (scan.hasNextInt()) {
+				EntityPlayerMP player = (EntityPlayerMP) Python2MinecraftApi.getServerEntityByID(scan.nextInt());
+				MinecraftForge.EVENT_BUS.post(new SocketEvent.Close(player));
+				Python2MinecraftApi.sendLine("Closing Socket for Player: " + player.getName());
+			}
+		});
+		APIRegistry.registerCommand(Python2MinecraftApi.SETBLOCK, (String args, Scanner scan, MCEventHandler eventHandler) -> {
+			Location pos = Python2MinecraftApi.getBlockLocation(scan);
+			short id = scan.nextShort();
+			short meta = scan.hasNextShort() ? scan.nextShort() : 0;
+			String tagString = Python2MinecraftApi.getRest(scan);
 
-					SetBlockStateWithId setState;
+			SetBlockStateWithId setState;
 
-					if (tagString.contains("{")) {
-						try {
-							setState = new SetBlockNBT(pos, id, meta, JsonToNBT.getTagFromJson(tagString));
-						} catch (NBTException e) {
-							System.err.println("Cannot parse NBT");
-							setState = new SetBlockStateWithId(pos, id, meta);
-						}
-					} else {
-						setState = new SetBlockStateWithId(pos, id, meta);
-					}
+			if (tagString.contains("{")) {
+				try {
+					setState = new SetBlockNBT(pos, id, meta, JsonToNBT.getTagFromJson(tagString));
+				} catch (NBTException e) {
+					System.err.println("Cannot parse NBT");
+					setState = new SetBlockStateWithId(pos, id, meta);
+				}
+			} else {
+				setState = new SetBlockStateWithId(pos, id, meta);
+			}
 
-					eventHandler.queueServerAction(setState);
-				});
-		APIRegistry.registerCommand(Python2MinecraftApi.GETBLOCK,
-				(String args, Scanner scan, MCEventHandler eventHandler) -> {
-					Location pos = Python2MinecraftApi.getBlockLocation(scan);
-					int id = eventHandler.getBlockId(pos);
+			eventHandler.queueServerAction(setState);
+		});
+		APIRegistry.registerCommand(Python2MinecraftApi.GETBLOCK, (String args, Scanner scan, MCEventHandler eventHandler) -> {
+			Location pos = Python2MinecraftApi.getBlockLocation(scan);
+			int id = eventHandler.getBlockId(pos);
 
-					Python2MinecraftApi.sendLine(id);
-				});
+			Python2MinecraftApi.sendLine(id);
+		});
 		APIRegistry.registerCommand(Python2MinecraftApi.GETBLOCKWITHDATA,
 				(String args, Scanner scan, MCEventHandler eventHandler) -> {
 					if (Python2MinecraftApi.includeNBTWithData) {
-						Python2MinecraftApi
-								.sendLine(eventHandler.describeBlockState(Python2MinecraftApi.getBlockLocation(scan)));
+						Python2MinecraftApi.sendLine(eventHandler.describeBlockState(Python2MinecraftApi.getBlockLocation(scan)));
 					} else {
 						Location loc = Python2MinecraftApi.getBlockLocation(scan);
-						Python2MinecraftApi
-								.sendLine("" + eventHandler.getBlockId(loc) + "," + eventHandler.getBlockMeta(loc));
+						Python2MinecraftApi.sendLine("" + eventHandler.getBlockId(loc) + "," + eventHandler.getBlockMeta(loc));
 					}
 				});
-		APIRegistry.registerCommand(Python2MinecraftApi.GETBLOCKS,
-				(String args, Scanner scan, MCEventHandler eventHandler) -> {
-					Location pos1 = Python2MinecraftApi.getBlockLocation(scan);
-					Location pos2 = Python2MinecraftApi.getBlockLocation(scan);
-					StringBuilder out = new StringBuilder();
-					int x1 = Math.min(pos1.getX(), pos2.getX());
-					int x2 = Math.max(pos1.getX(), pos2.getX());
-					int y1 = Math.min(pos1.getY(), pos2.getY());
-					int y2 = Math.max(pos1.getY(), pos2.getY());
-					int z1 = Math.min(pos1.getZ(), pos2.getZ());
-					int z2 = Math.max(pos1.getZ(), pos2.getZ());
-					for (int y = y1; y <= y2; y++) {
-						for (int x = x1; x <= x2; x++) {
-							for (int z = z1; z <= z2; z++) {
-								if (out.length() != 0) {
-									out.append(",");
-								}
-								out.append(eventHandler.getBlockId(new Location(pos1.getWorld(), x, y, z)));
-							}
+		APIRegistry.registerCommand(Python2MinecraftApi.GETBLOCKS, (String args, Scanner scan, MCEventHandler eventHandler) -> {
+			Location pos1 = Python2MinecraftApi.getBlockLocation(scan);
+			Location pos2 = Python2MinecraftApi.getBlockLocation(scan);
+			StringBuilder out = new StringBuilder();
+			int x1 = Math.min(pos1.getX(), pos2.getX());
+			int x2 = Math.max(pos1.getX(), pos2.getX());
+			int y1 = Math.min(pos1.getY(), pos2.getY());
+			int y2 = Math.max(pos1.getY(), pos2.getY());
+			int z1 = Math.min(pos1.getZ(), pos2.getZ());
+			int z2 = Math.max(pos1.getZ(), pos2.getZ());
+			for (int y = y1; y <= y2; y++) {
+				for (int x = x1; x <= x2; x++) {
+					for (int z = z1; z <= z2; z++) {
+						if (out.length() != 0) {
+							out.append(",");
 						}
+						out.append(eventHandler.getBlockId(new Location(pos1.getWorld(), x, y, z)));
 					}
-					Python2MinecraftApi.sendLine(out.toString());
-				});
+				}
+			}
+			Python2MinecraftApi.sendLine(out.toString());
+		});
 		APIRegistry.registerCommand(Python2MinecraftApi.GETBLOCKSWITHDATA,
 				(String args, Scanner scan, MCEventHandler eventHandler) -> {
 					Location pos1 = Python2MinecraftApi.getBlockLocation(scan);
@@ -633,66 +629,61 @@ public class Python2MinecraftApi {
 					}
 					Python2MinecraftApi.sendLine(out.toString());
 				});
-		APIRegistry.registerCommand(Python2MinecraftApi.GETHEIGHT,
-				(String args, Scanner scan, MCEventHandler eventHandler) -> {
-					int x0 = scan.nextInt();
-					int z0 = scan.nextInt();
-					Location pos = Location.decodeLocation(Python2MinecraftApi.serverWorlds, x0, 0, z0);
-					Chunk chunk = Python2MinecraftApi.serverWorlds[0].getChunkFromBlockCoords(pos);
-					int h = chunk.getHeight(pos);
-					int x = pos.getX();
-					int z = pos.getZ();
-					for (int y = Python2MinecraftApi.serverWorlds[0].getHeight(); y >= h; y--) {
-						Block b = chunk.getBlock(x, y, z);
-						if (b != Blocks.air) {
-							h = y;
-							break;
-						}
-					}
+		APIRegistry.registerCommand(Python2MinecraftApi.GETHEIGHT, (String args, Scanner scan, MCEventHandler eventHandler) -> {
+			int x0 = scan.nextInt();
+			int z0 = scan.nextInt();
+			Location pos = Location.decodeLocation(Python2MinecraftApi.serverWorlds, x0, 0, z0);
+			Chunk chunk = Python2MinecraftApi.serverWorlds[0].getChunkFromBlockCoords(pos);
+			int h = chunk.getHeight(pos);
+			int x = pos.getX();
+			int z = pos.getZ();
+			for (int y = Python2MinecraftApi.serverWorlds[0].getHeight(); y >= h; y--) {
+				Block b = chunk.getBlock(x, y, z);
+				if (b != Blocks.air) {
+					h = y;
+					break;
+				}
+			}
 
-					h -= Python2MinecraftApi.serverWorlds[0].getSpawnPoint().getY();
+			h -= Python2MinecraftApi.serverWorlds[0].getSpawnPoint().getY();
 
-					Python2MinecraftApi.sendLine(h);
-				});
-		APIRegistry.registerCommand(Python2MinecraftApi.GETLIGHTLEVEL,
-				(String args, Scanner scan, MCEventHandler eventHandler) -> {
-					Block block = Block.getBlockById(scan.nextInt());
-					Python2MinecraftApi.sendLine(block.getLightValue() / 15.);
-				});
-		APIRegistry.registerCommand(Python2MinecraftApi.SETLIGHTLEVEL,
-				(String args, Scanner scan, MCEventHandler eventHandler) -> {
-					int id = scan.nextInt();
-					float value = scan.nextFloat();
-					Block.getBlockById(id).setLightLevel(value);
-				});
-		APIRegistry.registerCommand(Python2MinecraftApi.SETBLOCKS,
-				(String args, Scanner scan, MCEventHandler eventHandler) -> {
-					Location pos1 = Python2MinecraftApi.getBlockLocation(scan);
-					Location pos2 = Python2MinecraftApi.getBlockLocation(scan);
+			Python2MinecraftApi.sendLine(h);
+		});
+		APIRegistry.registerCommand(Python2MinecraftApi.GETLIGHTLEVEL, (String args, Scanner scan, MCEventHandler eventHandler) -> {
+			Block block = Block.getBlockById(scan.nextInt());
+			Python2MinecraftApi.sendLine(block.getLightValue() / 15.);
+		});
+		APIRegistry.registerCommand(Python2MinecraftApi.SETLIGHTLEVEL, (String args, Scanner scan, MCEventHandler eventHandler) -> {
+			int id = scan.nextInt();
+			float value = scan.nextFloat();
+			Block.getBlockById(id).setLightLevel(value);
+		});
+		APIRegistry.registerCommand(Python2MinecraftApi.SETBLOCKS, (String args, Scanner scan, MCEventHandler eventHandler) -> {
+			Location pos1 = Python2MinecraftApi.getBlockLocation(scan);
+			Location pos2 = Python2MinecraftApi.getBlockLocation(scan);
 
-					short id = scan.nextShort();
-					short meta = scan.hasNextShort() ? scan.nextShort() : 0;
+			short id = scan.nextShort();
+			short meta = scan.hasNextShort() ? scan.nextShort() : 0;
 
-					String tagString = Python2MinecraftApi.getRest(scan);
+			String tagString = Python2MinecraftApi.getRest(scan);
 
-					SetBlocksState setState;
+			SetBlocksState setState;
 
-					if (tagString.contains("{")) {
-						try {
-							setState = new SetBlocksNBT(pos1, pos2, id, meta, JsonToNBT.getTagFromJson(tagString));
-						} catch (NBTException e) {
-							setState = new SetBlocksState(pos1, pos2, id, meta);
-						}
-					} else {
-						setState = new SetBlocksState(pos1, pos2, id, meta);
-					}
+			if (tagString.contains("{")) {
+				try {
+					setState = new SetBlocksNBT(pos1, pos2, id, meta, JsonToNBT.getTagFromJson(tagString));
+				} catch (NBTException e) {
+					setState = new SetBlocksState(pos1, pos2, id, meta);
+				}
+			} else {
+				setState = new SetBlocksState(pos1, pos2, id, meta);
+			}
 
-					eventHandler.queueServerAction(setState);
-				});
-		APIRegistry.registerCommand(Python2MinecraftApi.CHAT,
-				(String args, Scanner scan, MCEventHandler eventHandler) -> {
-					Python2MinecraftApi.chat(args);
-				});
+			eventHandler.queueServerAction(setState);
+		});
+		APIRegistry.registerCommand(Python2MinecraftApi.CHAT, (String args, Scanner scan, MCEventHandler eventHandler) -> {
+			Python2MinecraftApi.chat(args);
+		});
 		APIRegistry.registerCommand(Python2MinecraftApi.WORLDGETPLAYERIDS,
 				(String args, Scanner scan, MCEventHandler eventHandler) -> {
 					List<Integer> players = new ArrayList<>();
@@ -741,39 +732,34 @@ public class Python2MinecraftApi {
 				(String args, Scanner scan, MCEventHandler eventHandler) -> {
 					Python2MinecraftApi.spawnParticle(scan);
 				});
-		APIRegistry.registerCommand(Python2MinecraftApi.EVENTSCLEAR,
-				(String args, Scanner scan, MCEventHandler eventHandler) -> {
-					Python2MinecraftApi.clearAllEvents();
-				});
-		APIRegistry.registerCommand(Python2MinecraftApi.EVENTSBLOCKHITS,
-				(String args, Scanner scan, MCEventHandler eventHandler) -> {
-					Python2MinecraftApi.sendLine(Python2MinecraftApi.getHitsAndClear());
-				});
-		APIRegistry.registerCommand(Python2MinecraftApi.EVENTSCHATPOSTS,
-				(String args, Scanner scan, MCEventHandler eventHandler) -> {
-					Python2MinecraftApi.sendLine(Python2MinecraftApi.getChatsAndClear());
-				});
-		APIRegistry.registerCommand(Python2MinecraftApi.WORLDSETTING,
-				(String args, Scanner scan, MCEventHandler eventHandler) -> {
-					String setting = scan.next();
-					if (setting.equals("world_immutable")) {
-						eventHandler.setStopChanges(scan.nextInt() != 0);
-					} else if (setting.equals("include_nbt_with_data")) {
-						Python2MinecraftApi.includeNBTWithData = (scan.nextInt() != 0);
-					} else if (setting.equals("pause_drawing")) {
-						eventHandler.setPause(scan.nextInt() != 0);
-						// name_tags not supported
-					}
-				});
-		APIRegistry.registerCommand(Python2MinecraftApi.EVENTSSETTING,
-				(String args, Scanner scan, MCEventHandler eventHandler) -> {
-					String setting = scan.next();
-					if (setting.equals("restrict_to_sword")) {
-						Python2MinecraftApi.restrictToSword = (scan.nextInt() != 0);
-					} else if (setting.equals("detect_left_click")) {
-						Python2MinecraftApi.detectLeftClick = (scan.nextInt() != 0);
-					}
-				});
+		APIRegistry.registerCommand(Python2MinecraftApi.EVENTSCLEAR, (String args, Scanner scan, MCEventHandler eventHandler) -> {
+			Python2MinecraftApi.clearAllEvents();
+		});
+		APIRegistry.registerCommand(Python2MinecraftApi.EVENTSBLOCKHITS, (String args, Scanner scan, MCEventHandler eventHandler) -> {
+			Python2MinecraftApi.sendLine(Python2MinecraftApi.getHitsAndClear());
+		});
+		APIRegistry.registerCommand(Python2MinecraftApi.EVENTSCHATPOSTS, (String args, Scanner scan, MCEventHandler eventHandler) -> {
+			Python2MinecraftApi.sendLine(Python2MinecraftApi.getChatsAndClear());
+		});
+		APIRegistry.registerCommand(Python2MinecraftApi.WORLDSETTING, (String args, Scanner scan, MCEventHandler eventHandler) -> {
+			String setting = scan.next();
+			if (setting.equals("world_immutable")) {
+				eventHandler.setStopChanges(scan.nextInt() != 0);
+			} else if (setting.equals("include_nbt_with_data")) {
+				Python2MinecraftApi.includeNBTWithData = (scan.nextInt() != 0);
+			} else if (setting.equals("pause_drawing")) {
+				eventHandler.setPause(scan.nextInt() != 0);
+				// name_tags not supported
+			}
+		});
+		APIRegistry.registerCommand(Python2MinecraftApi.EVENTSSETTING, (String args, Scanner scan, MCEventHandler eventHandler) -> {
+			String setting = scan.next();
+			if (setting.equals("restrict_to_sword")) {
+				Python2MinecraftApi.restrictToSword = (scan.nextInt() != 0);
+			} else if (setting.equals("detect_left_click")) {
+				Python2MinecraftApi.detectLeftClick = (scan.nextInt() != 0);
+			}
+		});
 
 		// player
 		APIRegistry.registerCommand("player." + Python2MinecraftApi.GETPOS,
@@ -926,8 +912,7 @@ public class Python2MinecraftApi {
 						}
 					}
 					Python2MinecraftApi.mc.gameSettings.thirdPersonView = 0;
-					Python2MinecraftApi.mc.entityRenderer
-							.loadEntityShader(Python2MinecraftApi.mc.getRenderViewEntity());
+					Python2MinecraftApi.mc.entityRenderer.loadEntityShader(Python2MinecraftApi.mc.getRenderViewEntity());
 				});
 		APIRegistry.registerCommand("camera." + Python2MinecraftApi.SETDEBUG,
 				(String args, Scanner scan, MCEventHandler eventHandler) -> {
@@ -960,13 +945,13 @@ public class Python2MinecraftApi {
 
 	public static void onClick(PlayerInteractEvent event, MCEventHandler eventHandler) {
 		if ((event.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK)
-				|| (detectLeftClick && (event.action == PlayerInteractEvent.Action.LEFT_CLICK_BLOCK))) {
-			if (!restrictToSword || holdingSword(event.entityPlayer)) {
-				synchronized (hits) {
-					if (hits.size() >= MAX_HITS) {
-						hits.remove(0);
+				|| (Python2MinecraftApi.detectLeftClick && (event.action == PlayerInteractEvent.Action.LEFT_CLICK_BLOCK))) {
+			if (!Python2MinecraftApi.restrictToSword || Python2MinecraftApi.holdingSword(event.entityPlayer)) {
+				synchronized (Python2MinecraftApi.hits) {
+					if (Python2MinecraftApi.hits.size() >= Python2MinecraftApi.MAX_HITS) {
+						Python2MinecraftApi.hits.remove(0);
 					}
-					hits.add(new HitDescription(eventHandler.getWorlds(), event));
+					Python2MinecraftApi.hits.add(new HitDescription(eventHandler.getWorlds(), event));
 				}
 			}
 		}
@@ -1119,8 +1104,8 @@ public class Python2MinecraftApi {
 			if (particle == null) {
 				Python2MinecraftApi.fail("Cannot find particle type");
 			} else {
-				((WorldServer) pos.getWorld()).spawnParticle(particle, false, pos.xCoord, pos.yCoord, pos.zCoord, count, dx, dy, dz,
-						speed, extras);
+				((WorldServer) pos.getWorld()).spawnParticle(particle, false, pos.xCoord, pos.yCoord, pos.zCoord, count,
+						dx, dy, dz, speed, extras);
 			}
 		} else {
 			String particleName = scan.next();
@@ -1153,7 +1138,8 @@ public class Python2MinecraftApi {
 				Python2MinecraftApi.fail("Cannot find particle type");
 			} else {
 				for (int i = 0; i < count; i++) {
-					pos.getWorld().spawnParticle(particle, false, pos.xCoord, pos.yCoord, pos.zCoord, dx, dy, dz, extras);
+					pos.getWorld().spawnParticle(particle, false, pos.xCoord, pos.yCoord, pos.zCoord, dx, dy, dz,
+							extras);
 				}
 			}
 		}
