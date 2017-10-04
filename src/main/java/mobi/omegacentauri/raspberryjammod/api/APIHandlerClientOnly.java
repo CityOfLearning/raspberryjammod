@@ -12,6 +12,6 @@ public class APIHandlerClientOnly extends APIHandler {
 
 	public APIHandlerClientOnly(MCEventHandler eventHandler, PrintWriter writer) throws IOException {
 		super(eventHandler, writer);
-		APIRegistry.Python2MinecraftApi.setUseClientMethods(true);
+		Python2MinecraftApi.setUseClientMethods(true);
 	}
 }

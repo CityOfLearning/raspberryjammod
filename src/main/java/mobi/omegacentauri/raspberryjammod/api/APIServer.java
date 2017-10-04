@@ -102,7 +102,7 @@ public class APIServer {
 					synchronized (socketList) {
 						numSockets = socketList.size();
 					}
-					if (numSockets < MAX_CONNECTIONS) {
+					if (numSockets < APIServer.MAX_CONNECTIONS) {
 						final Socket socket = serverSocket.accept();
 						new Thread(() -> socketCommunicate(socket)).start();
 					} else {

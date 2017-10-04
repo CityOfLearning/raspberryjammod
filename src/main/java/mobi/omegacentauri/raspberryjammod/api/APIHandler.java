@@ -5,14 +5,15 @@ import java.io.PrintWriter;
 import java.util.Scanner;
 
 import mobi.omegacentauri.raspberryjammod.RaspberryJamMod;
-import mobi.omegacentauri.raspberryjammod.api.APIRegistry.Python2MinecraftApi.ChatDescription;
+import mobi.omegacentauri.raspberryjammod.api.Python2MinecraftApi.ChatDescription;
 import mobi.omegacentauri.raspberryjammod.events.MCEventHandler;
 import mobi.omegacentauri.raspberryjammod.network.CodeEvent;
+
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 
 public class APIHandler {
 
@@ -29,9 +30,9 @@ public class APIHandler {
 	}
 
 	public static void globalMessage(String message) {
-		for (World w : MinecraftServer.getServer().worldServers) {
+		for (World w : FMLCommonHandler.instance().getMinecraftServerInstance().worldServers) {
 			for (EntityPlayer p : w.playerEntities) {
-				p.addChatComponentMessage(new ChatComponentText(message));
+				p.addChatMessage(new ChatComponentText(message));
 			}
 		}
 	}
@@ -40,12 +41,12 @@ public class APIHandler {
 
 	public APIHandler(MCEventHandler eventHandler, PrintWriter writer) throws IOException {
 		this.eventHandler = eventHandler;
-		APIRegistry.Python2MinecraftApi.setWriter(writer);
+		Python2MinecraftApi.setWriter(writer);
 		eventHandler.registerAPIHandler(this);
 	}
 
 	public void addChatDescription(ChatDescription cd) {
-		APIRegistry.Python2MinecraftApi.addChatDescription(cd);
+		Python2MinecraftApi.addChatDescription(cd);
 	}
 
 	public void close() {
@@ -53,15 +54,15 @@ public class APIHandler {
 	}
 
 	protected void fail(String string) {
-		APIRegistry.Python2MinecraftApi.sendLine("Fail");
+		Python2MinecraftApi.sendLine("Fail");
 	}
 
 	public PrintWriter getWriter() {
-		return APIRegistry.Python2MinecraftApi.getWriter();
+		return Python2MinecraftApi.getWriter();
 	}
 
 	public void onClick(PlayerInteractEvent event) {
-		APIRegistry.Python2MinecraftApi.onClick(event, eventHandler);
+		Python2MinecraftApi.onClick(event, eventHandler);
 	}
 
 	public void onFail(CodeEvent.FailEvent event) {
@@ -69,11 +70,11 @@ public class APIHandler {
 	}
 
 	public void onSuccess(CodeEvent.RobotSuccessEvent event) {
-		APIRegistry.Python2MinecraftApi.sendLine(event.getEntityId() + "," + event.getCode());
+		Python2MinecraftApi.sendLine(event.getEntityId() + "," + event.getCode());
 	}
 
 	public void process(String clientSentence) {
-		if (!APIRegistry.Python2MinecraftApi.refresh()) {
+		if (!Python2MinecraftApi.refresh()) {
 			return;
 		}
 

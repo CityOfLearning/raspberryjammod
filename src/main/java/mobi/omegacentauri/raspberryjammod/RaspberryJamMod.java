@@ -12,6 +12,7 @@ import com.google.common.collect.Maps;
 
 import mobi.omegacentauri.raspberryjammod.api.APIRegistry;
 import mobi.omegacentauri.raspberryjammod.api.APIServer;
+import mobi.omegacentauri.raspberryjammod.api.Python2MinecraftApi;
 import mobi.omegacentauri.raspberryjammod.command.AddPythonExternalCommand;
 import mobi.omegacentauri.raspberryjammod.command.CameraCommand;
 import mobi.omegacentauri.raspberryjammod.command.NightVisionExternalCommand;
@@ -39,12 +40,11 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-@Mod(modid = RaspberryJamMod.MODID, version = RaspberryJamMod.VERSION, name = RaspberryJamMod.NAME, acceptableRemoteVersions = "*", acceptedMinecraftVersions = "[1.8,1.9)", dependencies = RaspberryJamMod.DEPENDENCIES)
+@Mod(modid = RaspberryJamMod.MODID, version = RaspberryJamMod.VERSION, name = RaspberryJamMod.NAME)
 public class RaspberryJamMod {
 	public static final String MODID = "raspberryjammod";
 	public static final String VERSION = "0.82";
 	public static final String NAME = "Raspberry Jam Mod";
-	public static final String DEPENDENCIES = "before:dyn;";
 
 	public static ScriptExternalCommand[] scriptExternalCommands = null;
 
@@ -225,6 +225,9 @@ public class RaspberryJamMod {
 					}
 				}
 			}).start();
+			
+			Python2MinecraftApi.init();
+			
 		} catch (IOException e1) {
 			RaspberryJamMod.logger.error("Threw " + e1);
 		}
@@ -292,8 +295,6 @@ public class RaspberryJamMod {
 	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
 		RaspberryJamMod.logger = event.getModLog();
-
-		APIRegistry.init();
 
 		integrated = true;
 		try {
